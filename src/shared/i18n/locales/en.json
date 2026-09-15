@@ -135,8 +135,8 @@
     "light": "Light",
     "dark": "Dark",
     "default": "Default",
-    "ocean": "Ocean",
-    "ember": "Ember",
-    "language": "Language"
+    "language": "Language",
+    "desert": "Desert",
+    "rosy": "Rosy"
   }
 }

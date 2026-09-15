@@ -14,7 +14,7 @@
 - TanStack Query · TanStack Table
 - React Hook Form + Zod
 - i18next (`en` + `fa`, RTL) · Vazirmatn / Inter
-- 3 named themes (Default, Ocean, Ember) × light/dark
+- 3 named themes (Default, Desert, Rosy) × light/dark
 - Zustand (theme/locale/auth prefs)
 - Vitest · Playwright · Storybook · husky · lint-staged · rollup-plugin-visualizer
 
@@ -76,7 +76,7 @@ pnpm install && pnpm dev
 
 ## Themes & i18n
 
-- Theme switcher: Default / Ocean / Ember
+- Theme switcher: Default (Dusty Olive) / Desert / Rosy
 - Mode: light / dark
 - Language: EN / FA (RTL + Vazirmatn when FA)
 - Preferences persist in `localStorage` via Zustand

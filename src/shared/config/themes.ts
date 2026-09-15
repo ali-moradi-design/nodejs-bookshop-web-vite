@@ -1,4 +1,4 @@
-export type ThemeName = 'default' | 'ocean' | 'ember';
+export type ThemeName = 'default' | 'desert' | 'rosy';
 export type ColorMode = 'light' | 'dark';
 
 export interface ThemeDefinition {
@@ -8,9 +8,9 @@ export interface ThemeDefinition {
 }
 
 export const THEMES: ThemeDefinition[] = [
-  { id: 'default', label: 'Default', labelFa: 'پیش‌فرض' },
-  { id: 'ocean', label: 'Ocean', labelFa: 'اقیانوس' },
-  { id: 'ember', label: 'Ember', labelFa: 'اخگر' },
+  { id: 'default', label: 'Default (Dusty Olive)', labelFa: 'پیش‌فرض' },
+  { id: 'desert', label: 'Desert', labelFa: 'کویری' },
+  { id: 'rosy', label: 'Rosy', labelFa: 'گل‌گون' },
 ];
 
 export const DEFAULT_THEME: ThemeName = 'default';

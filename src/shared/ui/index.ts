@@ -14,3 +14,4 @@ export * from './spinner';
 export * from './empty-state';
 export * from './alert';
 export * from './kokonut-button';
+export * from './beams-background';

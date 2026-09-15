@@ -14,6 +14,17 @@ interface PreferencesState {
   setLocale: (locale: Locale) => void;
 }
 
+const VALID_THEMES: ThemeName[] = ['default', 'desert', 'rosy'];
+
+function migrateTheme(value: unknown): ThemeName {
+  if (value === 'ocean') return 'desert';
+  if (value === 'ember') return 'rosy';
+  if (typeof value === 'string' && (VALID_THEMES as string[]).includes(value)) {
+    return value as ThemeName;
+  }
+  return DEFAULT_THEME;
+}
+
 export const usePreferences = create<PreferencesState>()(
   persist(
     (set, get) => ({
@@ -25,6 +36,16 @@ export const usePreferences = create<PreferencesState>()(
       toggleMode: () => set({ mode: get().mode === 'light' ? 'dark' : 'light' }),
       setLocale: (locale) => set({ locale }),
     }),
-    { name: 'bookstore-prefs' },
+    {
+      name: 'bookstore-prefs',
+      migrate: (persisted) => {
+        const state = (persisted ?? {}) as Partial<PreferencesState>;
+        return {
+          ...state,
+          theme: migrateTheme(state.theme),
+        } as PreferencesState;
+      },
+      version: 1,
+    },
   ),
 );
