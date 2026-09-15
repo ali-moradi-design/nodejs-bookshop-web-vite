@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { bookKeys, fetchBooks, type Book } from '@/entities/book';
 import { useDebouncedValue, usePreferences } from '@/shared/hooks';
-import { formatMoney, resolveImageUrl } from '@/shared/lib';
+import { formatMoney, resolveImageUrl, cn } from '@/shared/lib';
 import {
   Button,
   Dialog,
@@ -21,13 +21,34 @@ import {
 export function HeaderBookSearch() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(-1);
   const debouncedQ = useDebouncedValue(query.trim(), 300);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!open) setQuery('');
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      setQuery('');
+      setActiveIndex(-1);
+    }
   }, [open]);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [debouncedQ]);
 
   const enabled = open && debouncedQ.length > 0;
 
@@ -38,6 +59,20 @@ export function HeaderBookSearch() {
   });
 
   const results: Book[] = data?.data ?? [];
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((i) => Math.min(i + 1, results.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((i) => Math.max(i - 1, -1));
+    } else if (e.key === 'Enter' && activeIndex >= 0 && results[activeIndex]) {
+      e.preventDefault();
+      setOpen(false);
+      navigate(`/books/${results[activeIndex].id}`);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -53,16 +88,26 @@ export function HeaderBookSearch() {
           <div className="relative">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              ref={inputRef}
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={onKeyDown}
               placeholder={t('search.searchPlaceholder')}
               className="h-12 ps-10 text-base"
+              aria-label={t('common.search')}
+              aria-autocomplete="list"
+              aria-controls="header-search-results"
             />
           </div>
+          <p className="text-xs text-muted-foreground">{t('search.shortcutHint')}</p>
         </DialogHeader>
 
-        <div className="max-h-[min(60vh,28rem)] overflow-y-auto p-2">
+        <div
+          id="header-search-results"
+          role="listbox"
+          className="max-h-[min(60vh,28rem)] overflow-y-auto p-2"
+        >
           {!debouncedQ ? (
             <p className="px-3 py-8 text-center text-sm text-muted-foreground">
               {t('search.typeToSearch')}
@@ -88,18 +133,22 @@ export function HeaderBookSearch() {
 
           {enabled && !isFetching && results.length > 0 ? (
             <ul className="space-y-1">
-              {results.map((book) => {
+              {results.map((book, idx) => {
                 const src = resolveImageUrl(book.coverImageUrl) || '/placeholder-book.svg';
                 return (
-                  <li key={book.id}>
+                  <li key={book.id} role="option" aria-selected={idx === activeIndex}>
                     <Link
                       to={`/books/${book.id}`}
                       onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent"
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent',
+                        idx === activeIndex && 'bg-accent',
+                      )}
                     >
                       <img
                         src={src}
                         alt=""
+                        loading="lazy"
                         className="h-14 w-10 shrink-0 rounded object-cover bg-muted"
                       />
                       <div className="min-w-0 flex-1">
