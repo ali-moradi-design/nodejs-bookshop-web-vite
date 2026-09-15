@@ -60,7 +60,16 @@
     "maxPrice": "حداکثر قیمت",
     "inStock": "فقط موجود",
     "sort": "مرتب‌سازی",
-    "noResults": "کتابی با این فیلترها یافت نشد."
+    "noResults": "کتابی با این فیلترها یافت نشد.",
+    "apply": "اعمال",
+    "reset": "بازنشانی",
+    "searchPlaceholder": "عنوان، نویسنده…",
+    "priceRange": "بازه قیمت",
+    "categories": "دسته‌ها",
+    "sortNewest": "جدیدترین",
+    "sortPriceAsc": "قیمت ↑",
+    "sortPriceDesc": "قیمت ↓",
+    "sortTitleAsc": "عنوان الف–ی"
   },
   "book": {
     "addToCart": "افزودن به سبد",
@@ -138,5 +147,12 @@
     "language": "زبان",
     "desert": "کویری",
     "rosy": "گل‌گون"
+  },
+  "search": {
+    "searchPlaceholder": "جستجوی کتاب…",
+    "typeToSearch": "برای جستجو در فهرست شروع به تایپ کنید.",
+    "noResults": "کتابی یافت نشد.",
+    "viewAllInCatalog": "مشاهده همه نتایج «{{q}}» در فهرست",
+    "dialogHint": "جستجوی کتاب بر اساس عنوان یا نویسنده"
   }
 }

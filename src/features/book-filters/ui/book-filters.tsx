@@ -1,6 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import type { BookListParams } from '@/entities/book';
 import {
+  BOOK_CATEGORIES,
+  BOOK_PRICE_MAX,
+  BOOK_PRICE_MIN,
+  type BookListParams,
+} from '@/entities/book';
+import {
+  Button,
   Input,
   Label,
   Select,
@@ -8,8 +14,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Slider,
 } from '@/shared/ui';
 import type { BookFiltersState } from '../model/use-book-filters';
+
+const ALL_CATEGORY = '__all__';
 
 type Props = Pick<
   BookFiltersState,
@@ -17,15 +26,15 @@ type Props = Pick<
   | 'setQ'
   | 'category'
   | 'setCategory'
-  | 'minPrice'
-  | 'setMinPrice'
-  | 'maxPrice'
-  | 'setMaxPrice'
+  | 'priceRange'
+  | 'setPriceRange'
   | 'inStock'
   | 'setInStock'
   | 'sort'
   | 'order'
   | 'setSortOrder'
+  | 'applyFilters'
+  | 'resetFilters'
 >;
 
 export function BookFilters(props: Props) {
@@ -35,59 +44,115 @@ export function BookFilters(props: Props) {
     setQ,
     category,
     setCategory,
-    minPrice,
-    setMinPrice,
-    maxPrice,
-    setMaxPrice,
+    priceRange,
+    setPriceRange,
     inStock,
     setInStock,
     sort,
     order,
     setSortOrder,
+    applyFilters,
+    resetFilters,
   } = props;
 
   return (
-    <div className="grid gap-3 rounded-xl border bg-card p-4 md:grid-cols-6">
-      <div className="md:col-span-2 space-y-1">
-        <Label>{t('catalog.query')}</Label>
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('common.search')} />
+    <div className="space-y-4 rounded-xl border bg-card p-4">
+      <div className="grid gap-3 md:grid-cols-6">
+        <div className="space-y-1 md:col-span-2">
+          <Label htmlFor="catalog-q">{t('catalog.query')}</Label>
+          <Input
+            id="catalog-q"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t('catalog.searchPlaceholder')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') applyFilters();
+            }}
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label>{t('catalog.category')}</Label>
+          <Select
+            value={category || ALL_CATEGORY}
+            onValueChange={(v) => setCategory(v === ALL_CATEGORY ? '' : v)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t('common.all')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_CATEGORY}>{t('common.all')}</SelectItem>
+              {BOOK_CATEGORIES.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1 md:col-span-2">
+          <div className="flex items-center justify-between gap-2">
+            <Label>{t('catalog.priceRange')}</Label>
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {priceRange[0]} – {priceRange[1]}
+            </span>
+          </div>
+          <Slider
+            min={BOOK_PRICE_MIN}
+            max={BOOK_PRICE_MAX}
+            step={1}
+            value={priceRange}
+            onValueChange={(v) => {
+              const [a, b] = v;
+              setPriceRange([Math.min(a, b), Math.max(a, b)]);
+            }}
+            className="mt-3"
+            aria-label={t('catalog.priceRange')}
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label>{t('catalog.sort')}</Label>
+          <Select
+            value={`${sort}:${order}`}
+            onValueChange={(v) => {
+              const [s, o] = v.split(':') as [BookListParams['sort'], BookListParams['order']];
+              setSortOrder(s, o);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt:desc">{t('catalog.sortNewest')}</SelectItem>
+              <SelectItem value="price:asc">{t('catalog.sortPriceAsc')}</SelectItem>
+              <SelectItem value="price:desc">{t('catalog.sortPriceDesc')}</SelectItem>
+              <SelectItem value="title:asc">{t('catalog.sortTitleAsc')}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label>{t('catalog.category')}</Label>
-        <Input value={category} onChange={(e) => setCategory(e.target.value)} />
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={inStock}
+            onChange={(e) => setInStock(e.target.checked)}
+            className="h-4 w-4 rounded border"
+          />
+          {t('catalog.inStock')}
+        </label>
+        <div className="flex items-center gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={resetFilters}>
+            {t('catalog.reset')}
+          </Button>
+          <Button type="button" size="sm" onClick={applyFilters}>
+            {t('catalog.apply')}
+          </Button>
+        </div>
       </div>
-      <div className="space-y-1">
-        <Label>{t('catalog.minPrice')}</Label>
-        <Input type="number" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
-      </div>
-      <div className="space-y-1">
-        <Label>{t('catalog.maxPrice')}</Label>
-        <Input type="number" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
-      </div>
-      <div className="space-y-1">
-        <Label>{t('catalog.sort')}</Label>
-        <Select
-          value={`${sort}:${order}`}
-          onValueChange={(v) => {
-            const [s, o] = v.split(':') as [BookListParams['sort'], BookListParams['order']];
-            setSortOrder(s, o);
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="createdAt:desc">Newest</SelectItem>
-            <SelectItem value="price:asc">Price ↑</SelectItem>
-            <SelectItem value="price:desc">Price ↓</SelectItem>
-            <SelectItem value="title:asc">Title A–Z</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <label className="flex items-center gap-2 text-sm md:col-span-6">
-        <input type="checkbox" checked={inStock} onChange={(e) => setInStock(e.target.checked)} />
-        {t('catalog.inStock')}
-      </label>
     </div>
   );
 }

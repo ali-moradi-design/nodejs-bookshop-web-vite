@@ -60,7 +60,16 @@
     "maxPrice": "Max price",
     "inStock": "In stock only",
     "sort": "Sort by",
-    "noResults": "No books match your filters."
+    "noResults": "No books match your filters.",
+    "apply": "Apply",
+    "reset": "Reset",
+    "searchPlaceholder": "Title, author…",
+    "priceRange": "Price range",
+    "categories": "Categories",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price ↑",
+    "sortPriceDesc": "Price ↓",
+    "sortTitleAsc": "Title A–Z"
   },
   "book": {
     "addToCart": "Add to cart",
@@ -138,5 +147,12 @@
     "language": "Language",
     "desert": "Desert",
     "rosy": "Rosy"
+  },
+  "search": {
+    "searchPlaceholder": "Search books…",
+    "typeToSearch": "Start typing to search the catalog.",
+    "noResults": "No books found.",
+    "viewAllInCatalog": "View all results for “{{q}}” in catalog",
+    "dialogHint": "Search books by title or author"
   }
 }

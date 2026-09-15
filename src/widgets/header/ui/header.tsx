@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth';
 import { ThemeSwitcher } from '@/features/theme-switcher';
 import { LocaleSwitcher } from '@/features/locale-switcher';
+import { HeaderBookSearch } from '@/features/book-search';
 import { Button } from '@/shared/ui';
 import { isAdminUser } from '@/entities/user';
 
@@ -37,6 +38,7 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
+          <HeaderBookSearch />
           <LocaleSwitcher />
           <ThemeSwitcher />
           <Button variant="ghost" size="icon" asChild>
