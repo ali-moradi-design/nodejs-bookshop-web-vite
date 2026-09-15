@@ -19,7 +19,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 lg:flex-row">
+    <div className="mx-auto flex w-full max-w-[120rem] flex-1 flex-col gap-6 px-4 py-8 lg:flex-row">
       <aside className="w-full shrink-0 lg:w-60">
         <div className="mb-3 px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t('admin.title')}

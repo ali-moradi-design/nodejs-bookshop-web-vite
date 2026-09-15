@@ -14,7 +14,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-16 max-w-[120rem] items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <BookOpen className="h-5 w-5 text-primary" />

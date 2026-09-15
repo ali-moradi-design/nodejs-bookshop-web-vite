@@ -16,7 +16,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 md:flex-row">
+    <div className="mx-auto flex w-full max-w-[120rem] flex-1 flex-col gap-6 px-4 py-8 md:flex-row">
       <aside className="w-full shrink-0 md:w-56">
         <nav className="flex flex-row gap-1 overflow-x-auto rounded-xl border bg-card p-2 md:flex-col">
           {links.map((link) => (
