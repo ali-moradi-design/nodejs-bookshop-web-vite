@@ -59,18 +59,18 @@ pnpm install && pnpm dev
 
 ## Scripts
 
-| Script                    | Description                             |
-| ------------------------- | --------------------------------------- |
-| `pnpm dev`                | Vite dev server (port 5173)             |
-| `pnpm build`              | Typecheck + production build            |
-| `pnpm preview`            | Preview production build                |
-| `pnpm typecheck`          | `tsc -b`                                |
-| `pnpm lint`               | ESLint                                  |
-| `pnpm test`               | Vitest unit tests                       |
-| `pnpm test:e2e`           | Playwright smoke (app must be on :5173) |
-| `pnpm playwright:install` | Install Chromium for Playwright (once)  |
-| `pnpm storybook`          | Storybook                               |
-| `pnpm analyze`            | Bundle visualizer (`dist/stats.html`)   |
+| Script                    | Description                                  |
+| ------------------------- | -------------------------------------------- |
+| `pnpm dev`                | Vite dev server (port 5173)                  |
+| `pnpm build`              | Typecheck + production build                 |
+| `pnpm preview`            | Preview production build                     |
+| `pnpm typecheck`          | `tsc -b`                                     |
+| `pnpm lint`               | ESLint                                       |
+| `pnpm test`               | Vitest unit tests                            |
+| `pnpm test:e2e`           | Playwright smoke (app must be on :5173)      |
+| `pnpm playwright:install` | Optional bundled Chromium (needs CDN access) |
+| `pnpm storybook`          | Storybook                                    |
+| `pnpm analyze`            | Bundle visualizer (`dist/stats.html`)        |
 
 ## Auth & API
 
@@ -80,11 +80,21 @@ pnpm install && pnpm dev
 
 ## E2E (Playwright)
 
+Smoke tests use your **installed Google Chrome** by default (`channel: 'chrome'`), so you do **not** need `playwright install`. That download hits `cdn.playwright.dev`, which returns **403** in some regions.
+
 ```bash
-pnpm playwright:install   # once
 pnpm dev                  # app must be on http://localhost:5173
 pnpm test:e2e
 ```
+
+If Chrome is not installed but Edge is:
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL="msedge"
+pnpm test:e2e
+```
+
+Optional: install Playwright’s bundled Chromium only if you have a working VPN/proxy to the CDN (`pnpm playwright:install`).
 
 With an empty `VITE_API_URL`, browser requests go to the Vite origin and are proxied to the API — no CORS setup needed for local e2e. If you set `VITE_API_URL` to the API host, ensure backend `CORS_ORIGIN` includes `http://localhost:5173`.
 
