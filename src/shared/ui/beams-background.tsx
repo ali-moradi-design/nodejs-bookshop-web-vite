@@ -9,7 +9,7 @@
 
 import { motion } from 'motion/react';
 import { useEffect, useRef, type ReactNode } from 'react';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib';
 
 interface AnimatedGradientBackgroundProps {
   className?: string;

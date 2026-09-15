@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { BeamsBackground } from '@/shared/ui/beams-background';
+import { BeamsBackground } from '@/shared/ui';
 import { Button } from '@/shared/ui';
 
 const MARQUEE_WORDS = [

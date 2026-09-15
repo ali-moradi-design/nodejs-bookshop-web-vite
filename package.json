@@ -18,7 +18,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "analyze": "vite build --mode analyze",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:fsd": "node scripts/check-fsd.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

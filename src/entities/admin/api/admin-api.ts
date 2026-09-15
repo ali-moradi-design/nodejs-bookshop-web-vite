@@ -1,7 +1,7 @@
 import { apiGet } from '@/shared/api';
 import type { ApiData } from '@/shared/api';
-import type { Book } from '@/entities/book';
-import type { Order } from '@/entities/order';
+import type { Book } from '@/entities/book/@x/admin';
+import type { Order } from '@/entities/order/@x/admin';
 import type { DashboardSummary } from '../model/types';
 
 export const adminKeys = {

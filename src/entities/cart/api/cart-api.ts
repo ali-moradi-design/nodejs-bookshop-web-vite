@@ -1,6 +1,6 @@
 import { apiDelete, apiGet, apiPatch, apiPost } from '@/shared/api';
 import type { ApiData } from '@/shared/api';
-import type { Order } from '@/entities/order';
+import type { Order } from '@/entities/order/@x/cart';
 import type { Cart, CheckoutInput } from '../model/types';
 
 export const cartKeys = {

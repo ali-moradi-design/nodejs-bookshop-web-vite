@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zInt, zNum } from '@/shared/lib/zod-helpers';
+import { zInt, zNum } from '@/shared/lib';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 import { toast } from 'sonner';
