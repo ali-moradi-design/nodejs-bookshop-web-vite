@@ -8,21 +8,41 @@ import { Header } from '@/widgets/header';
 import { Footer } from '@/widgets/footer';
 import { RequireAuth } from '@/features/auth';
 import { PageLoader } from '@/shared/ui';
-import { HomePage } from '@/pages/home';
-import { CatalogPage } from '@/pages/catalog';
-import { BookDetailPage } from '@/pages/book-detail';
-import { CartPage } from '@/pages/cart';
-import { CheckoutPage } from '@/pages/checkout';
-import { LoginPage } from '@/pages/login';
-import { RegisterPage } from '@/pages/register';
-import { PanelDashboardPage } from '@/pages/panel/dashboard';
-import { ProfilePage } from '@/pages/panel/profile';
-import { PanelOrdersPage } from '@/pages/panel/orders';
-import { PanelOrderDetailPage } from '@/pages/panel/order-detail';
-import { FavoritesPage } from '@/pages/panel/favorites';
-import { MyReviewsPage } from '@/pages/panel/reviews';
-import { ReportIssuePage } from '@/pages/panel/report';
 
+const HomePage = lazy(() => import('@/pages/home').then((m) => ({ default: m.HomePage })));
+const CatalogPage = lazy(() => import('@/pages/catalog').then((m) => ({ default: m.CatalogPage })));
+const BookDetailPage = lazy(() =>
+  import('@/pages/book-detail').then((m) => ({ default: m.BookDetailPage })),
+);
+const CartPage = lazy(() => import('@/pages/cart').then((m) => ({ default: m.CartPage })));
+const CheckoutPage = lazy(() =>
+  import('@/pages/checkout').then((m) => ({ default: m.CheckoutPage })),
+);
+const LoginPage = lazy(() => import('@/pages/login').then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() =>
+  import('@/pages/register').then((m) => ({ default: m.RegisterPage })),
+);
+const PanelDashboardPage = lazy(() =>
+  import('@/pages/panel/dashboard').then((m) => ({ default: m.PanelDashboardPage })),
+);
+const ProfilePage = lazy(() =>
+  import('@/pages/panel/profile').then((m) => ({ default: m.ProfilePage })),
+);
+const PanelOrdersPage = lazy(() =>
+  import('@/pages/panel/orders').then((m) => ({ default: m.PanelOrdersPage })),
+);
+const PanelOrderDetailPage = lazy(() =>
+  import('@/pages/panel/order-detail').then((m) => ({ default: m.PanelOrderDetailPage })),
+);
+const FavoritesPage = lazy(() =>
+  import('@/pages/panel/favorites').then((m) => ({ default: m.FavoritesPage })),
+);
+const MyReviewsPage = lazy(() =>
+  import('@/pages/panel/reviews').then((m) => ({ default: m.MyReviewsPage })),
+);
+const ReportIssuePage = lazy(() =>
+  import('@/pages/panel/report').then((m) => ({ default: m.ReportIssuePage })),
+);
 const AdminDashboardPage = lazy(() =>
   import('@/pages/admin/dashboard').then((m) => ({ default: m.AdminDashboardPage })),
 );
@@ -51,11 +71,15 @@ const AdminAnalyticsPage = lazy(() =>
   import('@/pages/admin/analytics').then((m) => ({ default: m.AdminAnalyticsPage })),
 );
 
+const RouteFallback = () => <PageLoader />;
+
 const StorefrontLayout = () => (
   <div className="flex min-h-screen flex-col">
     <Header />
     <StorefrontShell>
-      <Outlet />
+      <Suspense fallback={<RouteFallback />}>
+        <Outlet />
+      </Suspense>
     </StorefrontShell>
     <Footer />
   </div>
@@ -66,7 +90,9 @@ const PanelLayout = () => (
     <Header />
     <RequireAuth>
       <PanelShell>
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
       </PanelShell>
     </RequireAuth>
   </div>
@@ -77,7 +103,7 @@ const AdminLayout = () => (
     <Header />
     <RequireAuth requireAdmin>
       <AdminShell>
-        <Suspense fallback={<PageLoader />}>
+        <Suspense fallback={<RouteFallback />}>
           <Outlet />
         </Suspense>
       </AdminShell>
