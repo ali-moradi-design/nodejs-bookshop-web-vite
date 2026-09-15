@@ -99,6 +99,20 @@ function checkImport(importerRel, importedRel, spec) {
     return;
   }
 
+  // Same-layer features/widgets must not import each other
+  if (
+    from.layer === toLayer &&
+    (toLayer === 'features' || toLayer === 'widgets') &&
+    from.slice &&
+    toParts[1] &&
+    from.slice !== toParts[1]
+  ) {
+    errors.push(
+      `${importerRel}: cross-slice ${toLayer} import '${spec}' (no same-layer coupling)`,
+    );
+    return;
+  }
+
   // Deep imports into another slice (layer/slice/segment/...)
   // Allowed: @/layer/slice  OR  @/entities/x/@x/y  OR same-slice internals
   if (toLayer === 'shared') {

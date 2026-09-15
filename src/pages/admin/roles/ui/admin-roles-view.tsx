@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
 import { fetchRoles, roleKeys, type Role } from '@/entities/role';
-import { DataTable } from '@/widgets/data-table';
+import { DataTable } from '@/shared/ui';
 import { Alert, Badge, PageLoader } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 

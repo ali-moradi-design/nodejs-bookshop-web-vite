@@ -1,26 +1,19 @@
 import { Link } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { favoriteKeys, fetchFavorites, removeFavorite } from '@/entities/favorite';
+import { favoriteKeys, fetchFavorites } from '@/entities/favorite';
+import { RemoveFavoriteButton } from '@/features/favorites';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
-import { Alert, Button, EmptyState, PageLoader } from '@/shared/ui';
+import { Alert, EmptyState, PageLoader } from '@/shared/ui';
 
 export function FavoritesPage() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: favoriteKeys.list(),
     queryFn: async () => (await fetchFavorites()).data,
-  });
-
-  const remove = useMutation({
-    mutationFn: (bookId: string) => removeFavorite(bookId),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: favoriteKeys.all }),
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
   });
 
   if (isLoading) return <PageLoader />;
@@ -54,9 +47,7 @@ export function FavoritesPage() {
                   : ''}
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => remove.mutate(fav.bookId)}>
-              {t('common.delete')}
-            </Button>
+            <RemoveFavoriteButton bookId={fav.bookId} />
           </li>
         ))}
       </ul>

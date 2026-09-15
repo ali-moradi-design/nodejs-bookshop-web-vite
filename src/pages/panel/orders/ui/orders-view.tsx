@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
 import { fetchOrders, orderKeys, type Order } from '@/entities/order';
-import { DataTable } from '@/widgets/data-table';
+import { DataTable } from '@/shared/ui';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { Alert, Badge, Button, PageLoader } from '@/shared/ui';

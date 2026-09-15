@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { cartKeys, clearCart, fetchCart, removeCartItem, updateCartItem } from '@/entities/cart';
+import { cartKeys, fetchCart } from '@/entities/cart';
 import { bookKeys, fetchBook } from '@/entities/book';
 import { useAuthStore } from '@/features/auth';
+import { CartLineControls, ClearCartButton } from '@/features/cart';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
@@ -12,7 +12,6 @@ import {
   Alert,
   Button,
   EmptyState,
-  Input,
   PageLoader,
   Table,
   TableBody,
@@ -21,13 +20,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/ui';
-import { useQueries } from '@tanstack/react-query';
 
 export function CartPage() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
   const user = useAuthStore((s) => s.user);
-  const qc = useQueryClient();
 
   const cartQuery = useQuery({
     queryKey: cartKeys.current(),
@@ -42,23 +39,6 @@ export function CartPage() {
       queryFn: async () => (await fetchBook(item.bookId)).data,
       enabled: Boolean(user),
     })),
-  });
-
-  const updateMut = useMutation({
-    mutationFn: ({ bookId, quantity }: { bookId: string; quantity: number }) =>
-      updateCartItem(bookId, quantity),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: cartKeys.all }),
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
-
-  const removeMut = useMutation({
-    mutationFn: (bookId: string) => removeCartItem(bookId),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: cartKeys.all }),
-  });
-
-  const clearMut = useMutation({
-    mutationFn: () => clearCart(),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: cartKeys.all }),
   });
 
   if (!user) {
@@ -108,9 +88,7 @@ export function CartPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('cart.title')}</h1>
-        <Button variant="outline" onClick={() => clearMut.mutate()} disabled={clearMut.isPending}>
-          {t('cart.clear')}
-        </Button>
+        <ClearCartButton />
       </div>
       <div className="rounded-xl border bg-card">
         <Table>
@@ -119,7 +97,6 @@ export function CartPage() {
               <TableHead>Book</TableHead>
               <TableHead>{t('cart.quantity')}</TableHead>
               <TableHead>{t('book.price')}</TableHead>
-              <TableHead>{t('common.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,25 +107,9 @@ export function CartPage() {
                   <div className="text-xs text-muted-foreground">{book?.author}</div>
                 </TableCell>
                 <TableCell>
-                  <Input
-                    className="w-20"
-                    type="number"
-                    min={1}
-                    defaultValue={item.quantity}
-                    onBlur={(e) => {
-                      const q = Number(e.target.value);
-                      if (q >= 1 && q !== item.quantity) {
-                        updateMut.mutate({ bookId: item.bookId, quantity: q });
-                      }
-                    }}
-                  />
+                  <CartLineControls bookId={item.bookId} quantity={item.quantity} />
                 </TableCell>
                 <TableCell>{formatMoney(line, book?.currency || 'USD', locale)}</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" onClick={() => removeMut.mutate(item.bookId)}>
-                    {t('cart.remove')}
-                  </Button>
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>

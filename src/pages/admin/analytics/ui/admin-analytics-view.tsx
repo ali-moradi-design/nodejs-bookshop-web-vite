@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PageLoader } from '@/shared/ui';
 
 const AdminCharts = lazy(() =>
-  import('@/pages/admin/dashboard/ui/admin-charts').then((m) => ({ default: m.AdminCharts })),
+  import('@/widgets/admin-charts').then((m) => ({ default: m.AdminCharts })),
 );
 
 export function AdminAnalyticsPage() {

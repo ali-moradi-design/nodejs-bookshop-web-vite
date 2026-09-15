@@ -4,6 +4,8 @@ import { AppProviders } from '@/app/providers';
 import { StorefrontShell } from '@/widgets/storefront-shell';
 import { PanelShell } from '@/widgets/panel-shell';
 import { AdminShell } from '@/widgets/admin-shell';
+import { Header } from '@/widgets/header';
+import { Footer } from '@/widgets/footer';
 import { PageLoader } from '@/shared/ui';
 import { HomePage } from '@/pages/home';
 import { CatalogPage } from '@/pages/catalog';
@@ -49,23 +51,33 @@ const AdminAnalyticsPage = lazy(() =>
 );
 
 const StorefrontLayout = () => (
-  <StorefrontShell>
-    <Outlet />
-  </StorefrontShell>
+  <div className="flex min-h-screen flex-col">
+    <Header />
+    <StorefrontShell>
+      <Outlet />
+    </StorefrontShell>
+    <Footer />
+  </div>
 );
 
 const PanelLayout = () => (
-  <PanelShell>
-    <Outlet />
-  </PanelShell>
+  <div className="flex min-h-screen flex-col">
+    <Header />
+    <PanelShell>
+      <Outlet />
+    </PanelShell>
+  </div>
 );
 
 const AdminLayout = () => (
-  <AdminShell>
-    <Suspense fallback={<PageLoader />}>
-      <Outlet />
-    </Suspense>
-  </AdminShell>
+  <div className="flex min-h-screen flex-col">
+    <Header />
+    <AdminShell>
+      <Suspense fallback={<PageLoader />}>
+        <Outlet />
+      </Suspense>
+    </AdminShell>
+  </div>
 );
 
 export function AppRouter() {

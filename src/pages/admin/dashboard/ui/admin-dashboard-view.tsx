@@ -13,7 +13,9 @@ import { usePreferences } from '@/shared/hooks';
 import { Alert, Badge, Card, CardContent, CardHeader, CardTitle, PageLoader } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 
-const AdminCharts = lazy(() => import('./admin-charts').then((m) => ({ default: m.AdminCharts })));
+const AdminCharts = lazy(() =>
+  import('@/widgets/admin-charts').then((m) => ({ default: m.AdminCharts })),
+);
 
 export function AdminDashboardPage() {
   const { t } = useTranslation();
