@@ -6,7 +6,7 @@ import { bookKeys, fetchBook } from '@/entities/book';
 import { useAuthStore } from '@/features/auth';
 import { CartLineControls, ClearCartButton } from '@/features/cart';
 import { formatMoney } from '@/shared/lib';
-import { usePreferences } from '@/shared/hooks';
+import { usePreferences, usePageTitle } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
 import {
   Alert,
@@ -23,6 +23,7 @@ import {
 
 export function CartPage() {
   const { t } = useTranslation();
+  usePageTitle(t('cart.title'));
   const locale = usePreferences((s) => s.locale);
   const user = useAuthStore((s) => s.user);
 
@@ -45,7 +46,7 @@ export function CartPage() {
     return (
       <EmptyState
         title={t('cart.title')}
-        description="Please log in to view your cart."
+        description={t('cart.loginHint')}
         action={
           <Button asChild>
             <Link to="/login">{t('nav.login')}</Link>
@@ -59,7 +60,10 @@ export function CartPage() {
   if (cartQuery.error) {
     return (
       <Alert variant="destructive">
-        {cartQuery.error instanceof ApiError ? cartQuery.error.message : t('common.error')}
+        {cartQuery.error instanceof ApiError ? cartQuery.error.message : t('common.error')}{' '}
+        <button type="button" className="underline" onClick={() => void cartQuery.refetch()}>
+          {t('common.retry')}
+        </button>
       </Alert>
     );
   }
@@ -68,6 +72,7 @@ export function CartPage() {
     return (
       <EmptyState
         title={t('cart.empty')}
+        description={t('cart.emptyHint')}
         action={
           <Button asChild>
             <Link to="/catalog">{t('nav.catalog')}</Link>

@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, ShoppingCart, User } from 'lucide-react';
+import { BookOpen, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth';
 import { ThemeSwitcher } from '@/features/theme-switcher';
 import { LocaleSwitcher } from '@/features/locale-switcher';
 import { HeaderBookSearch } from '@/features/book-search';
+import { CartBadgeLink } from '@/features/cart';
 import { Button } from '@/shared/ui';
 import { isAdminUser } from '@/entities/user';
 
@@ -41,11 +42,7 @@ export function Header() {
           <HeaderBookSearch />
           <LocaleSwitcher />
           <ThemeSwitcher />
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/cart" aria-label={t('nav.cart')}>
-              <ShoppingCart />
-            </Link>
-          </Button>
+          <CartBadgeLink enabled={Boolean(user)} />
           {user ? (
             <>
               <Button variant="ghost" size="icon" asChild>

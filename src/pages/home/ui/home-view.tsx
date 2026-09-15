@@ -1,13 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { bookKeys, fetchFeaturedBooks } from '@/entities/book';
-import { BookGrid } from '@/widgets/book-grid';
+import { BookGrid, BookGridSkeleton } from '@/widgets/book-grid';
 import { HomeHero } from '@/widgets/home-hero';
-import { Alert, PageLoader, EmptyState } from '@/shared/ui';
+import { RecentlyViewedSection } from '@/widgets/recently-viewed';
+import { Alert, EmptyState } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
+import { usePageTitle } from '@/shared/hooks';
 
 export function HomePage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.home'));
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: bookKeys.featured(),
     queryFn: async () => (await fetchFeaturedBooks()).data,
@@ -19,11 +22,11 @@ export function HomePage() {
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">{t('home.featured')}</h2>
-        {isLoading ? <PageLoader /> : null}
+        {isLoading ? <BookGridSkeleton count={5} /> : null}
         {error ? (
           <Alert variant="destructive">
             {error instanceof ApiError ? error.message : t('common.error')}{' '}
-            <button className="underline" onClick={() => void refetch()}>
+            <button type="button" className="underline" onClick={() => void refetch()}>
               {t('common.retry')}
             </button>
           </Alert>
@@ -31,8 +34,10 @@ export function HomePage() {
         {!isLoading && !error && (!data || data.length === 0) ? (
           <EmptyState title={t('common.empty')} description={t('catalog.noResults')} />
         ) : null}
-        {data && data.length > 0 ? <BookGrid books={data} /> : null}
+        {data && data.length > 0 ? <BookGrid books={data} withFavorites /> : null}
       </section>
+
+      <RecentlyViewedSection />
     </div>
   );
 }

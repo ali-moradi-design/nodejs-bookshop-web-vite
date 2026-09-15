@@ -4,14 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { favoriteKeys, fetchFavorites } from '@/entities/favorite';
 import { RemoveFavoriteButton } from '@/features/favorites';
 import { formatMoney } from '@/shared/lib';
-import { usePreferences } from '@/shared/hooks';
+import { usePreferences, usePageTitle } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
-import { Alert, EmptyState, PageLoader } from '@/shared/ui';
+import { Alert, Button, EmptyState, PageLoader } from '@/shared/ui';
 
 export function FavoritesPage() {
   const { t } = useTranslation();
+  usePageTitle(t('nav.favorites'));
   const locale = usePreferences((s) => s.locale);
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: favoriteKeys.list(),
     queryFn: async () => (await fetchFavorites()).data,
   });
@@ -20,12 +21,26 @@ export function FavoritesPage() {
   if (error) {
     return (
       <Alert variant="destructive">
-        {error instanceof ApiError ? error.message : t('common.error')}
+        {error instanceof ApiError ? error.message : t('common.error')}{' '}
+        <button type="button" className="underline" onClick={() => void refetch()}>
+          {t('common.retry')}
+        </button>
       </Alert>
     );
   }
-  if (!data?.length)
-    return <EmptyState title={t('nav.favorites')} description={t('common.empty')} />;
+  if (!data?.length) {
+    return (
+      <EmptyState
+        title={t('nav.favorites')}
+        description={t('favorites.emptyHint')}
+        action={
+          <Button asChild>
+            <Link to="/catalog">{t('favorites.browseCatalog')}</Link>
+          </Button>
+        }
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

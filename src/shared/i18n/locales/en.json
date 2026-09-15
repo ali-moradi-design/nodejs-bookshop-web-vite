@@ -20,7 +20,9 @@
     "page": "Page",
     "of": "of",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "loadMore": "Load more",
+    "clearFilters": "Clear filters"
   },
   "nav": {
     "home": "Home",
@@ -43,13 +45,15 @@
     "permissions": "Permissions",
     "discounts": "Discounts",
     "reports": "Issues",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "cartWithCount": "Cart, {{count}} items"
   },
   "home": {
     "heroTitle": "Discover your next favorite book",
     "heroSubtitle": "Browse featured titles, manage your cart, and track orders — all in one place.",
     "featured": "Featured books",
-    "browseAll": "Browse catalog"
+    "browseAll": "Browse catalog",
+    "recentlyViewed": "Recently viewed"
   },
   "catalog": {
     "title": "Catalog",
@@ -69,7 +73,15 @@
     "sortNewest": "Newest",
     "sortPriceAsc": "Price ↑",
     "sortPriceDesc": "Price ↓",
-    "sortTitleAsc": "Title A–Z"
+    "sortTitleAsc": "Title A–Z",
+    "from": "From",
+    "to": "To",
+    "currency": "$",
+    "cheapest": "Cheapest",
+    "mostExpensive": "Most expensive",
+    "clearFilters": "Clear filters",
+    "loadMore": "Load more",
+    "activeFilters": "Active filters"
   },
   "book": {
     "addToCart": "Add to cart",
@@ -90,7 +102,9 @@
     "quantity": "Qty",
     "remove": "Remove",
     "clear": "Clear cart",
-    "subtotal": "Subtotal"
+    "subtotal": "Subtotal",
+    "emptyHint": "Browse the catalog and add books you like.",
+    "loginHint": "Please log in to view your cart."
   },
   "checkout": {
     "title": "Checkout",
@@ -153,6 +167,18 @@
     "typeToSearch": "Start typing to search the catalog.",
     "noResults": "No books found.",
     "viewAllInCatalog": "View all results for “{{q}}” in catalog",
-    "dialogHint": "Search books by title or author"
+    "dialogHint": "Search books by title or author",
+    "shortcutHint": "Press ⌘K or Ctrl+K to search"
+  },
+  "toast": {
+    "addedToCart": "Added to cart",
+    "addedFavorite": "Added to favorites",
+    "removedFavorite": "Removed from favorites",
+    "orderPlaced": "Order placed",
+    "couponApplied": "Coupon applied"
+  },
+  "favorites": {
+    "emptyHint": "Save books you love and find them here later.",
+    "browseCatalog": "Browse catalog"
   }
 }

@@ -1,10 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  BOOK_CATEGORIES,
-  BOOK_PRICE_MAX,
-  BOOK_PRICE_MIN,
-  type BookListParams,
-} from '@/entities/book';
+import { BOOK_CATEGORIES, type BookListParams } from '@/entities/book';
 import {
   Button,
   Input,
@@ -14,9 +9,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Slider,
 } from '@/shared/ui';
 import type { BookFiltersState } from '../model/use-book-filters';
+import { PriceRangeFilter } from './price-range-filter';
 
 const ALL_CATEGORY = '__all__';
 
@@ -57,7 +52,7 @@ export function BookFilters(props: Props) {
 
   return (
     <div className="space-y-4 rounded-xl border bg-card p-4">
-      <div className="grid gap-3 md:grid-cols-6">
+      <div className="grid gap-3 md:grid-cols-4">
         <div className="space-y-1 md:col-span-2">
           <Label htmlFor="catalog-q">{t('catalog.query')}</Label>
           <Input
@@ -91,27 +86,6 @@ export function BookFilters(props: Props) {
           </Select>
         </div>
 
-        <div className="space-y-1 md:col-span-2">
-          <div className="flex items-center justify-between gap-2">
-            <Label>{t('catalog.priceRange')}</Label>
-            <span className="text-xs tabular-nums text-muted-foreground">
-              {priceRange[0]} – {priceRange[1]}
-            </span>
-          </div>
-          <Slider
-            min={BOOK_PRICE_MIN}
-            max={BOOK_PRICE_MAX}
-            step={1}
-            value={priceRange}
-            onValueChange={(v) => {
-              const [a, b] = v;
-              setPriceRange([Math.min(a, b), Math.max(a, b)]);
-            }}
-            className="mt-3"
-            aria-label={t('catalog.priceRange')}
-          />
-        </div>
-
         <div className="space-y-1">
           <Label>{t('catalog.sort')}</Label>
           <Select
@@ -133,6 +107,8 @@ export function BookFilters(props: Props) {
           </Select>
         </div>
       </div>
+
+      <PriceRangeFilter priceRange={priceRange} setPriceRange={setPriceRange} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-sm">

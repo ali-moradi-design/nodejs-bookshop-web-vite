@@ -1,1 +1,1 @@
-export * from './ui/book-grid';
+export { BookGrid, BookGridSkeleton } from './ui/book-grid';

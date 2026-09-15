@@ -20,7 +20,9 @@
     "page": "صفحه",
     "of": "از",
     "previous": "قبلی",
-    "next": "بعدی"
+    "next": "بعدی",
+    "loadMore": "بارگذاری بیشتر",
+    "clearFilters": "پاک کردن فیلترها"
   },
   "nav": {
     "home": "خانه",
@@ -43,13 +45,15 @@
     "permissions": "دسترسی‌ها",
     "discounts": "تخفیف‌ها",
     "reports": "گزارش‌ها",
-    "analytics": "تحلیل‌ها"
+    "analytics": "تحلیل‌ها",
+    "cartWithCount": "سبد خرید، {{count}} مورد"
   },
   "home": {
     "heroTitle": "کتاب بعدی مورد علاقه‌ات را پیدا کن",
     "heroSubtitle": "کتاب‌های ویژه را ببین، سبد خرید را مدیریت کن و سفارش‌ها را پیگیری کن.",
     "featured": "کتاب‌های ویژه",
-    "browseAll": "مشاهده فهرست"
+    "browseAll": "مشاهده فهرست",
+    "recentlyViewed": "بازدیدهای اخیر"
   },
   "catalog": {
     "title": "فهرست کتاب‌ها",
@@ -64,12 +68,20 @@
     "apply": "اعمال",
     "reset": "بازنشانی",
     "searchPlaceholder": "عنوان، نویسنده…",
-    "priceRange": "بازه قیمت",
+    "priceRange": "محدوده قیمت",
     "categories": "دسته‌ها",
     "sortNewest": "جدیدترین",
     "sortPriceAsc": "قیمت ↑",
     "sortPriceDesc": "قیمت ↓",
-    "sortTitleAsc": "عنوان الف–ی"
+    "sortTitleAsc": "عنوان الف–ی",
+    "from": "از",
+    "to": "تا",
+    "currency": "تومان",
+    "cheapest": "ارزان‌ترین",
+    "mostExpensive": "گران‌ترین",
+    "clearFilters": "پاک کردن فیلترها",
+    "loadMore": "بارگذاری بیشتر",
+    "activeFilters": "فیلترهای فعال"
   },
   "book": {
     "addToCart": "افزودن به سبد",
@@ -90,7 +102,9 @@
     "quantity": "تعداد",
     "remove": "حذف",
     "clear": "خالی کردن سبد",
-    "subtotal": "جمع جزء"
+    "subtotal": "جمع جزء",
+    "emptyHint": "از فهرست کتاب‌ها دیدن کنید و کتاب‌های مورد علاقه‌تان را اضافه کنید.",
+    "loginHint": "برای مشاهده سبد خرید وارد شوید."
   },
   "checkout": {
     "title": "تسویه حساب",
@@ -153,6 +167,18 @@
     "typeToSearch": "برای جستجو در فهرست شروع به تایپ کنید.",
     "noResults": "کتابی یافت نشد.",
     "viewAllInCatalog": "مشاهده همه نتایج «{{q}}» در فهرست",
-    "dialogHint": "جستجوی کتاب بر اساس عنوان یا نویسنده"
+    "dialogHint": "جستجوی کتاب بر اساس عنوان یا نویسنده",
+    "shortcutHint": "با ⌘K یا Ctrl+K جستجو کنید"
+  },
+  "toast": {
+    "addedToCart": "به سبد اضافه شد",
+    "addedFavorite": "به علاقه‌مندی‌ها اضافه شد",
+    "removedFavorite": "از علاقه‌مندی‌ها حذف شد",
+    "orderPlaced": "سفارش ثبت شد",
+    "couponApplied": "کد تخفیف اعمال شد"
+  },
+  "favorites": {
+    "emptyHint": "کتاب‌های مورد علاقه‌تان را ذخیره کنید تا بعداً اینجا ببینید.",
+    "browseCatalog": "مشاهده فهرست"
   }
 }

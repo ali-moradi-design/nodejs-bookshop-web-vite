@@ -57,7 +57,7 @@ export function CheckoutForm({ defaultFullName = '' }: Props) {
         discountCode: values.discountCode || undefined,
       }),
     onSuccess: (res) => {
-      toast.success('Order placed');
+      toast.success(t('toast.orderPlaced'));
       navigate(`/panel/orders/${res.data.id}`);
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),

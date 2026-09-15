@@ -1,15 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { bookKeys, fetchBook } from '@/entities/book';
+import { bookKeys, fetchBook, BookCoverImage, BookDetailSkeleton } from '@/entities/book';
 import { fetchReviews, reviewKeys, type Review } from '@/entities/review';
 import { useAuthStore } from '@/features/auth';
 import { AddToCartButton } from '@/features/cart';
 import { FavoriteToggleButton } from '@/features/favorites';
 import { CreateReviewForm, ReviewList } from '@/features/reviews';
-import { formatMoney, resolveImageUrl } from '@/shared/lib';
-import { usePreferences } from '@/shared/hooks';
-import { Alert, Badge, Card, CardContent, CardHeader, CardTitle, PageLoader } from '@/shared/ui';
+import { useTrackRecentlyViewed } from '@/features/recently-viewed';
+import { formatMoney } from '@/shared/lib';
+import { usePreferences, usePageTitle } from '@/shared/hooks';
+import { Alert, Badge, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 
 export function BookDetailPage() {
@@ -25,6 +26,9 @@ export function BookDetailPage() {
     enabled: Boolean(id),
   });
 
+  useTrackRecentlyViewed(bookQuery.data);
+  usePageTitle(bookQuery.data?.title ?? t('nav.catalog'));
+
   const reviewsQuery = useQuery({
     queryKey: reviewKeys.list({ book: id }),
     queryFn: async () => {
@@ -34,7 +38,7 @@ export function BookDetailPage() {
     enabled: Boolean(id),
   });
 
-  if (bookQuery.isLoading) return <PageLoader />;
+  if (bookQuery.isLoading) return <BookDetailSkeleton />;
   if (bookQuery.error || !bookQuery.data) {
     return (
       <Alert variant="destructive">
@@ -44,12 +48,15 @@ export function BookDetailPage() {
   }
 
   const book = bookQuery.data;
-  const src = resolveImageUrl(book.coverImageUrl) || '/placeholder-book.svg';
 
   return (
     <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
       <div className="relative aspect-[3/4] overflow-hidden rounded-xl border bg-muted">
-        <img src={src} alt={book.title} className="absolute inset-0 h-full w-full object-cover" />
+        <BookCoverImage
+          coverImageUrl={book.coverImageUrl}
+          alt={book.title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       </div>
       <div className="space-y-6">
         <div className="space-y-2">
@@ -77,7 +84,7 @@ export function BookDetailPage() {
         <p className="leading-relaxed text-muted-foreground">{book.description}</p>
         <div className="flex flex-wrap gap-2">
           <AddToCartButton bookId={id} disabled={book.stock <= 0 || !user} />
-          {user ? <FavoriteToggleButton bookId={id} /> : null}
+          <FavoriteToggleButton bookId={id} isAuthenticated={Boolean(user)} />
         </div>
 
         <Card>

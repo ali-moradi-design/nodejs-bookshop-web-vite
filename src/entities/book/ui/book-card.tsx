@@ -2,19 +2,21 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'motion/react';
 import type { Book } from '../model/types';
-import { formatMoney, resolveImageUrl } from '@/shared/lib';
+import { formatMoney } from '@/shared/lib';
 import { Badge, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/shared/ui';
 import { usePreferences } from '@/shared/hooks';
+import { BookCoverImage } from './book-cover-image';
 
 interface BookCardProps {
   book: Book;
+  /** Optional overlay actions (e.g. favorite) — composed by widgets/features */
+  actions?: React.ReactNode;
 }
 
-export function BookCard({ book }: BookCardProps) {
+export function BookCard({ book, actions }: BookCardProps) {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
   const reduceMotion = useReducedMotion();
-  const src = resolveImageUrl(book.coverImageUrl) || '/placeholder-book.svg';
   const categories = book.categories ?? [];
   const visibleCats = categories.slice(0, 2);
   const overflow = categories.length - visibleCats.length;
@@ -32,7 +34,7 @@ export function BookCard({ book }: BookCardProps) {
       }
       transition={{ type: 'spring', stiffness: 360, damping: 22 }}
     >
-      <Card className="group relative flex h-full flex-col overflow-hidden border-border/80 transition-[box-shadow,border-color] duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/25">
+      <Card className="group relative flex h-full flex-col overflow-hidden border-border/80 transition-[box-shadow,border-color] duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/25 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/40">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-[inherit] ring-0 ring-primary/0 transition-[box-shadow] duration-300 group-hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_40%,transparent)]"
@@ -44,10 +46,19 @@ export function BookCard({ book }: BookCardProps) {
           />
         ) : null}
 
-        <Link to={`/books/${book.id}`} className="relative flex flex-1 flex-col">
+        {actions ? (
+          <div className="absolute end-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
+            {actions}
+          </div>
+        ) : null}
+
+        <Link
+          to={`/books/${book.id}`}
+          className="relative flex flex-1 flex-col outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        >
           <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
-            <img
-              src={src}
+            <BookCoverImage
+              coverImageUrl={book.coverImageUrl}
               alt={book.title}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
