@@ -6,6 +6,7 @@ import { PanelShell } from '@/widgets/panel-shell';
 import { AdminShell } from '@/widgets/admin-shell';
 import { Header } from '@/widgets/header';
 import { Footer } from '@/widgets/footer';
+import { RequireAuth } from '@/features/auth';
 import { PageLoader } from '@/shared/ui';
 import { HomePage } from '@/pages/home';
 import { CatalogPage } from '@/pages/catalog';
@@ -63,20 +64,24 @@ const StorefrontLayout = () => (
 const PanelLayout = () => (
   <div className="flex min-h-screen flex-col">
     <Header />
-    <PanelShell>
-      <Outlet />
-    </PanelShell>
+    <RequireAuth>
+      <PanelShell>
+        <Outlet />
+      </PanelShell>
+    </RequireAuth>
   </div>
 );
 
 const AdminLayout = () => (
   <div className="flex min-h-screen flex-col">
     <Header />
-    <AdminShell>
-      <Suspense fallback={<PageLoader />}>
-        <Outlet />
-      </Suspense>
-    </AdminShell>
+    <RequireAuth requireAdmin>
+      <AdminShell>
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
+      </AdminShell>
+    </RequireAuth>
   </div>
 );
 

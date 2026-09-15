@@ -10,6 +10,7 @@
 
 - **Vite** · React 19 · TypeScript (strict) · React Router
 - Feature-Sliced Design (`src/app`, `src/pages`, `src/widgets`, `src/features`, `src/entities`, `src/shared`)
+- Architecture guide: [`docs/fsd.md`](./docs/fsd.md) · `pnpm check:fsd`
 - Tailwind CSS v4 · shadcn/ui · Kokonut UI registry (`@kokonutui`)
 - TanStack Query · TanStack Table
 - React Hook Form + Zod

@@ -1,10 +1,6 @@
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '@/features/auth';
 import { cn } from '@/shared/lib';
-import { PageLoader } from '@/shared/ui';
 
 const links = [
   { href: '/panel', key: 'dashboard' },
@@ -18,15 +14,6 @@ const links = [
 export function PanelShell({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const hydrated = useAuthStore((s) => s.hydrated);
-
-  useEffect(() => {
-    if (hydrated && !user) navigate('/login', { replace: true });
-  }, [hydrated, user, navigate]);
-
-  if (!hydrated || !user) return <PageLoader />;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 md:flex-row">

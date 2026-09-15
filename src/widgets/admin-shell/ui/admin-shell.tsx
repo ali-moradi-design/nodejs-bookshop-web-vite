@@ -1,11 +1,6 @@
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '@/features/auth';
-import { isAdminUser } from '@/entities/user';
 import { cn } from '@/shared/lib';
-import { Alert, PageLoader } from '@/shared/ui';
 
 const links = [
   { href: '/admin', key: 'dashboard' },
@@ -22,24 +17,6 @@ const links = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const hydrated = useAuthStore((s) => s.hydrated);
-  const admin = isAdminUser(user);
-
-  useEffect(() => {
-    if (hydrated && !user) navigate('/login', { replace: true });
-  }, [hydrated, user, navigate]);
-
-  if (!hydrated || !user) return <PageLoader />;
-
-  if (!admin) {
-    return (
-      <div className="mx-auto max-w-lg px-4 py-16">
-        <Alert variant="destructive">Forbidden: admin role required.</Alert>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 lg:flex-row">
