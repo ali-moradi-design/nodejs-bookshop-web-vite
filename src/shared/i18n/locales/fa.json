@@ -93,7 +93,13 @@
     "writeReview": "ثبت نظر",
     "favorite": "علاقه‌مندی",
     "unfavorite": "حذف از علاقه‌مندی",
-    "featured": "ویژه"
+    "featured": "ویژه",
+    "yourRating": "امتیاز شما",
+    "rating": "امتیاز",
+    "rateOutOf5": "امتیاز {{n}} از ۵",
+    "averageRating": "میانگین امتیاز",
+    "averageRatingValue": "{{rating}} از ۵ · {{count}} نظر",
+    "reviewUpdated": "نظر به‌روزرسانی شد"
   },
   "cart": {
     "title": "سبد خرید",

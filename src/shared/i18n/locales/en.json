@@ -93,7 +93,13 @@
     "writeReview": "Write a review",
     "favorite": "Favorite",
     "unfavorite": "Remove favorite",
-    "featured": "Featured"
+    "featured": "Featured",
+    "yourRating": "Your rating",
+    "rating": "Rating",
+    "rateOutOf5": "Rate {{n}} out of 5",
+    "averageRating": "Average rating",
+    "averageRatingValue": "{{rating}} / 5 · {{count}} reviews",
+    "reviewUpdated": "Review updated"
   },
   "cart": {
     "title": "Your cart",

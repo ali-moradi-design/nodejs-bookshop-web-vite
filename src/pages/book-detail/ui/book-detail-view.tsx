@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useBookQuery, BookCoverImage, BookDetailSkeleton } from '@/entities/book';
@@ -5,7 +6,7 @@ import { useReviewsQuery } from '@/entities/review';
 import { useAuthStore } from '@/features/auth';
 import { AddToCartButton } from '@/features/cart';
 import { FavoriteToggleButton } from '@/features/favorites';
-import { CreateReviewForm, ReviewList } from '@/features/reviews';
+import { CreateReviewForm, LoveRating, ReviewList } from '@/features/reviews';
 import { useTrackRecentlyViewed } from '@/features/recently-viewed';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences, usePageTitle } from '@/shared/hooks';
@@ -24,6 +25,18 @@ export function BookDetailPage() {
   usePageTitle(bookQuery.data?.title ?? t('nav.catalog'));
 
   const reviewsQuery = useReviewsQuery({ book: id, limit: 50 }, { enabled: Boolean(id) });
+  const reviews = reviewsQuery.data ?? [];
+
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return null;
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    return Math.round(sum / reviews.length);
+  }, [reviews]);
+
+  const myReview = useMemo(
+    () => (user ? reviews.find((r) => r.user === user.id) : undefined),
+    [reviews, user],
+  );
 
   if (bookQuery.isLoading) return <BookDetailSkeleton />;
   if (bookQuery.error || !bookQuery.data) {
@@ -54,6 +67,22 @@ export function BookDetailPage() {
           <p className="text-muted-foreground">
             {t('book.author')}: {book.author}
           </p>
+          {averageRating != null ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <LoveRating
+                value={averageRating}
+                readOnly
+                size="md"
+                aria-label={t('book.averageRating')}
+              />
+              <span className="text-sm text-muted-foreground">
+                {t('book.averageRatingValue', {
+                  rating: averageRating,
+                  count: reviews.length,
+                })}
+              </span>
+            </div>
+          ) : null}
           <p className="text-2xl font-semibold">{formatMoney(book.price, book.currency, locale)}</p>
           <p className="text-sm text-muted-foreground">
             {book.stock > 0 ? `${t('book.stock')}: ${book.stock}` : t('book.outOfStock')}
@@ -79,8 +108,10 @@ export function BookDetailPage() {
             <CardTitle>{t('book.reviews')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {user ? <CreateReviewForm bookId={id} /> : null}
-            <ReviewList reviews={reviewsQuery.data ?? []} />
+            {user ? (
+              <CreateReviewForm key={myReview?.id ?? 'new'} bookId={id} existingReview={myReview} />
+            ) : null}
+            <ReviewList reviews={reviews} />
           </CardContent>
         </Card>
       </div>
