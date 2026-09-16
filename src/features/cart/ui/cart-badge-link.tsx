@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartQuery } from '@/entities/cart';
-import { useCartBooksQueries } from '@/entities/book';
+import { BookCoverImage, useCartBooksQueries } from '@/entities/book';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import {
@@ -100,8 +100,14 @@ export function CartBadgeLink({ enabled = true }: Props) {
             </div>
           ) : cartQuery.isLoading ? (
             <div className="space-y-3">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
+              <div className="flex gap-3">
+                <Skeleton className="h-16 w-12 shrink-0 rounded-md" />
+                <Skeleton className="h-16 flex-1" />
+              </div>
+              <div className="flex gap-3">
+                <Skeleton className="h-16 w-12 shrink-0 rounded-md" />
+                <Skeleton className="h-16 flex-1" />
+              </div>
             </div>
           ) : items.length === 0 ? (
             <div className="space-y-3 text-sm">
@@ -120,20 +126,45 @@ export function CartBadgeLink({ enabled = true }: Props) {
                   key={item.bookId}
                   className="space-y-2 border-b border-border pb-3 last:border-0"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
-                        {loading ? '…' : (book?.title ?? item.bookId)}
-                      </p>
-                      {book?.author ? (
-                        <p className="truncate text-xs text-muted-foreground">{book.author}</p>
-                      ) : null}
+                  <div className="flex items-start gap-3">
+                    <SheetClose asChild>
+                      <Link
+                        to={`/books/${item.bookId}`}
+                        className="relative block h-16 w-12 shrink-0 overflow-hidden rounded-md border bg-muted"
+                      >
+                        {loading ? (
+                          <Skeleton className="absolute inset-0 h-full w-full" />
+                        ) : (
+                          <BookCoverImage
+                            coverImageUrl={book?.coverImageUrl}
+                            alt={book?.title ?? item.bookId}
+                            className="absolute inset-0 h-full w-full object-cover"
+                          />
+                        )}
+                      </Link>
+                    </SheetClose>
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <SheetClose asChild>
+                            <Link
+                              to={`/books/${item.bookId}`}
+                              className="block truncate text-sm font-medium hover:underline"
+                            >
+                              {loading ? '…' : (book?.title ?? item.bookId)}
+                            </Link>
+                          </SheetClose>
+                          {book?.author ? (
+                            <p className="truncate text-xs text-muted-foreground">{book.author}</p>
+                          ) : null}
+                        </div>
+                        <p className="shrink-0 text-sm font-medium">
+                          {formatMoney(line, book?.currency || 'USD', locale)}
+                        </p>
+                      </div>
+                      <CartLineControls bookId={item.bookId} quantity={item.quantity} />
                     </div>
-                    <p className="shrink-0 text-sm font-medium">
-                      {formatMoney(line, book?.currency || 'USD', locale)}
-                    </p>
                   </div>
-                  <CartLineControls bookId={item.bookId} quantity={item.quantity} />
                 </li>
               ))}
             </ul>
