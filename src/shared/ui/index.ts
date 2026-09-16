@@ -17,3 +17,4 @@ export * from './kokonut-button';
 export * from './beams-background';
 export * from './data-table';
 export * from './slider';
+export * from './sheet';

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth';
 import { ThemeSwitcher } from '@/features/theme-switcher';
@@ -19,7 +19,13 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-[120rem] items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <BookOpen className="h-5 w-5 text-primary" />
+            <img
+              src="/logo.png"
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-md object-contain"
+            />
             <span>{t('common.appName')}</span>
           </Link>
           <nav className="hidden items-center gap-4 text-sm md:flex">

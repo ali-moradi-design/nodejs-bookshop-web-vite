@@ -52,7 +52,7 @@ export function BookFilters(props: Props) {
 
   return (
     <div className="space-y-4 rounded-xl border bg-card p-4">
-      <div className="grid gap-3 md:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-5">
         <div className="space-y-1 md:col-span-2">
           <Label htmlFor="catalog-q">{t('catalog.query')}</Label>
           <Input
@@ -86,6 +86,8 @@ export function BookFilters(props: Props) {
           </Select>
         </div>
 
+        <PriceRangeFilter priceRange={priceRange} setPriceRange={setPriceRange} />
+
         <div className="space-y-1">
           <Label>{t('catalog.sort')}</Label>
           <Select
@@ -107,8 +109,6 @@ export function BookFilters(props: Props) {
           </Select>
         </div>
       </div>
-
-      <PriceRangeFilter priceRange={priceRange} setPriceRange={setPriceRange} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-sm">

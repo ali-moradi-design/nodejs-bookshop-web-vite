@@ -72,7 +72,7 @@ const make = (theme: ThemeName, mode: ColorMode): Story => ({
 
 export const DefaultLight = make('default', 'light');
 export const DefaultDark = make('default', 'dark');
-export const DesertLight = make('desert', 'light');
-export const DesertDark = make('desert', 'dark');
-export const RosyLight = make('rosy', 'light');
-export const RosyDark = make('rosy', 'dark');
+export const AmethystLight = make('amethyst', 'light');
+export const AmethystDark = make('amethyst', 'dark');
+export const TerracottaLight = make('terracotta', 'light');
+export const TerracottaDark = make('terracotta', 'dark');

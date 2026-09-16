@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-const APP_NAME = 'Bookshop';
+const APP_NAME = 'Niko Bookshop';
 
-/** Sets document.title to `${title} · Bookshop` (or app name alone). */
+/** Sets document.title to `${title} · Niko Bookshop` (or app name alone). */
 export function usePageTitle(title?: string | null) {
   useEffect(() => {
     const prev = document.title;

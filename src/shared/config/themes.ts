@@ -1,4 +1,4 @@
-export type ThemeName = 'default' | 'desert' | 'rosy';
+export type ThemeName = 'default' | 'amethyst' | 'terracotta';
 export type ColorMode = 'light' | 'dark';
 
 export interface ThemeDefinition {
@@ -8,9 +8,9 @@ export interface ThemeDefinition {
 }
 
 export const THEMES: ThemeDefinition[] = [
-  { id: 'default', label: 'Default (Dusty Olive)', labelFa: 'پیش‌فرض' },
-  { id: 'desert', label: 'Desert', labelFa: 'کویری' },
-  { id: 'rosy', label: 'Rosy', labelFa: 'گل‌گون' },
+  { id: 'default', label: 'Pine', labelFa: 'کاج' },
+  { id: 'amethyst', label: 'Amethyst', labelFa: 'آمتیست' },
+  { id: 'terracotta', label: 'Terracotta', labelFa: 'سفال' },
 ];
 
 export const DEFAULT_THEME: ThemeName = 'default';

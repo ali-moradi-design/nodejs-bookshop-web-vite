@@ -14,11 +14,11 @@ interface PreferencesState {
   setLocale: (locale: Locale) => void;
 }
 
-const VALID_THEMES: ThemeName[] = ['default', 'desert', 'rosy'];
+const VALID_THEMES: ThemeName[] = ['default', 'amethyst', 'terracotta'];
 
 function migrateTheme(value: unknown): ThemeName {
-  if (value === 'ocean') return 'desert';
-  if (value === 'ember') return 'rosy';
+  if (value === 'ocean' || value === 'desert') return 'amethyst';
+  if (value === 'ember' || value === 'rosy') return 'terracotta';
   if (typeof value === 'string' && (VALID_THEMES as string[]).includes(value)) {
     return value as ThemeName;
   }
@@ -45,7 +45,7 @@ export const usePreferences = create<PreferencesState>()(
           theme: migrateTheme(state.theme),
         } as PreferencesState;
       },
-      version: 1,
+      version: 2,
     },
   ),
 );

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Bookshop",
+    "appName": "Niko Bookshop",
     "loading": "Loading…",
     "save": "Save",
     "cancel": "Cancel",
@@ -104,7 +104,8 @@
     "clear": "Clear cart",
     "subtotal": "Subtotal",
     "emptyHint": "Browse the catalog and add books you like.",
-    "loginHint": "Please log in to view your cart."
+    "loginHint": "Please log in to view your cart.",
+    "viewCart": "View cart"
   },
   "checkout": {
     "title": "Checkout",
@@ -157,10 +158,10 @@
     "mode": "Appearance",
     "light": "Light",
     "dark": "Dark",
-    "default": "Default",
+    "default": "Pine",
     "language": "Language",
-    "desert": "Desert",
-    "rosy": "Rosy"
+    "amethyst": "Amethyst",
+    "terracotta": "Terracotta"
   },
   "search": {
     "searchPlaceholder": "Search books…",
