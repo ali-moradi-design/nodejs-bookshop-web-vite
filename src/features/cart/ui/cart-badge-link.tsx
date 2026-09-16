@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCartQuery } from '@/entities/cart';
-import { BookCoverImage, useCartBooksQueries } from '@/entities/book';
+import { useCartBooksQueries } from '@/entities/book';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import {
@@ -17,7 +17,7 @@ import {
   SheetClose,
   Skeleton,
 } from '@/shared/ui';
-import { CartLineControls } from './cart-line-controls';
+import { CartSheetLine } from './cart-sheet-line';
 
 type Props = {
   /** When false, skip cart fetch (guest). */
@@ -82,13 +82,15 @@ export function CartBadgeLink({ enabled = true }: Props) {
         ) : null}
       </Button>
 
-      <SheetContent side={side} className="flex w-full flex-col sm:max-w-md">
-        <SheetHeader>
+      <SheetContent side={side} className="flex w-full flex-col gap-0 p-0 sm:max-w-md">
+        <SheetHeader className="border-b px-4 py-4 text-start sm:text-start">
           <SheetTitle>{t('cart.title')}</SheetTitle>
-          <SheetDescription className="sr-only">{t('cart.title')}</SheetDescription>
+          <SheetDescription className={count > 0 ? 'text-muted-foreground' : 'sr-only'}>
+            {count > 0 ? t('nav.cartWithCount', { count }) : t('cart.title')}
+          </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {!enabled ? (
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">{t('cart.loginHint')}</p>
@@ -99,16 +101,21 @@ export function CartBadgeLink({ enabled = true }: Props) {
               </SheetClose>
             </div>
           ) : cartQuery.isLoading ? (
-            <div className="space-y-3">
-              <div className="flex gap-3">
-                <Skeleton className="h-16 w-12 shrink-0 rounded-md" />
-                <Skeleton className="h-16 flex-1" />
-              </div>
-              <div className="flex gap-3">
-                <Skeleton className="h-16 w-12 shrink-0 rounded-md" />
-                <Skeleton className="h-16 flex-1" />
-              </div>
-            </div>
+            <ul className="flex flex-col gap-3">
+              {[0, 1].map((key) => (
+                <li key={key} className="rounded-lg border bg-card/50 p-3">
+                  <div className="flex gap-3">
+                    <Skeleton className="h-24 w-[4.5rem] shrink-0 rounded-md" />
+                    <div className="flex flex-1 flex-col gap-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-1/3" />
+                      <Skeleton className="mt-1 h-8 w-28" />
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           ) : items.length === 0 ? (
             <div className="space-y-3 text-sm">
               <p className="font-medium">{t('cart.empty')}</p>
@@ -120,64 +127,31 @@ export function CartBadgeLink({ enabled = true }: Props) {
               </SheetClose>
             </div>
           ) : (
-            <ul className="space-y-4">
+            <ul className="flex flex-col gap-3">
               {rows.map(({ item, book, line, loading }) => (
-                <li
+                <CartSheetLine
                   key={item.bookId}
-                  className="space-y-2 border-b border-border pb-3 last:border-0"
-                >
-                  <div className="flex items-start gap-3">
-                    <SheetClose asChild>
-                      <Link
-                        to={`/books/${item.bookId}`}
-                        className="relative block h-16 w-12 shrink-0 overflow-hidden rounded-md border bg-muted"
-                      >
-                        {loading ? (
-                          <Skeleton className="absolute inset-0 h-full w-full" />
-                        ) : (
-                          <BookCoverImage
-                            coverImageUrl={book?.coverImageUrl}
-                            alt={book?.title ?? item.bookId}
-                            className="absolute inset-0 h-full w-full object-cover"
-                          />
-                        )}
-                      </Link>
-                    </SheetClose>
-                    <div className="min-w-0 flex-1 space-y-2">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <SheetClose asChild>
-                            <Link
-                              to={`/books/${item.bookId}`}
-                              className="block truncate text-sm font-medium hover:underline"
-                            >
-                              {loading ? '…' : (book?.title ?? item.bookId)}
-                            </Link>
-                          </SheetClose>
-                          {book?.author ? (
-                            <p className="truncate text-xs text-muted-foreground">{book.author}</p>
-                          ) : null}
-                        </div>
-                        <p className="shrink-0 text-sm font-medium">
-                          {formatMoney(line, book?.currency || 'USD', locale)}
-                        </p>
-                      </div>
-                      <CartLineControls bookId={item.bookId} quantity={item.quantity} />
-                    </div>
-                  </div>
-                </li>
+                  bookId={item.bookId}
+                  quantity={item.quantity}
+                  book={book}
+                  lineTotal={line}
+                  loading={loading}
+                  locale={locale}
+                />
               ))}
             </ul>
           )}
         </div>
 
-        {enabled && items.length > 0 ? (
-          <div className="border-t pt-3 text-sm font-semibold">
-            {t('cart.subtotal')}: {formatMoney(subtotal, 'USD', locale)}
-          </div>
-        ) : null}
-
-        <SheetFooter className="mt-4 gap-2 sm:flex-col sm:space-x-0">
+        <SheetFooter className="sticky bottom-0 mt-auto gap-3 border-t bg-background px-4 py-4 sm:flex-col sm:space-x-0">
+          {enabled && items.length > 0 ? (
+            <div className="flex w-full items-center justify-between text-sm">
+              <span className="text-muted-foreground">{t('cart.subtotal')}</span>
+              <span className="text-base font-bold tabular-nums">
+                {formatMoney(subtotal, 'USD', locale)}
+              </span>
+            </div>
+          ) : null}
           <SheetClose asChild>
             <Button asChild variant="outline" className="w-full">
               <Link to="/cart">{t('cart.viewCart')}</Link>

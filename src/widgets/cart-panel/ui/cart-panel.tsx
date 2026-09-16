@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCartQuery } from '@/entities/cart';
-import { useCartBooksQueries } from '@/entities/book';
+import { BookCoverImage, useCartBooksQueries } from '@/entities/book';
 import { useAuthStore } from '@/features/auth';
 import { CartLineControls, ClearCartButton } from '@/features/cart';
 import { formatMoney } from '@/shared/lib';
@@ -12,6 +12,7 @@ import {
   Button,
   EmptyState,
   PageLoader,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -76,8 +77,9 @@ export function CartPanel() {
 
   const rows = items.map((item, i) => {
     const book = bookQueries[i]?.data;
+    const loading = bookQueries[i]?.isLoading;
     const line = (book?.price ?? 0) * item.quantity;
-    return { item, book, line };
+    return { item, book, line, loading };
   });
   const subtotal = rows.reduce((sum, row) => sum + row.line, 0);
 
@@ -97,16 +99,38 @@ export function CartPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map(({ item, book, line }) => (
+            {rows.map(({ item, book, line, loading }) => (
               <TableRow key={item.bookId}>
                 <TableCell>
-                  <div className="font-medium">{book?.title ?? item.bookId}</div>
-                  <div className="text-xs text-muted-foreground">{book?.author}</div>
+                  <div className="flex items-start gap-3">
+                    <Link
+                      to={`/books/${item.bookId}`}
+                      className="relative block h-16 w-12 shrink-0 overflow-hidden rounded-md border bg-muted shadow-sm"
+                    >
+                      {loading ? (
+                        <Skeleton className="absolute inset-0 h-full w-full rounded-md" />
+                      ) : (
+                        <BookCoverImage
+                          coverImageUrl={book?.coverImageUrl}
+                          alt={book?.title ?? item.bookId}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      )}
+                    </Link>
+                    <div className="min-w-0">
+                      <Link to={`/books/${item.bookId}`} className="font-medium hover:underline">
+                        {book?.title ?? item.bookId}
+                      </Link>
+                      <div className="text-xs text-muted-foreground">{book?.author}</div>
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <CartLineControls bookId={item.bookId} quantity={item.quantity} />
                 </TableCell>
-                <TableCell>{formatMoney(line, book?.currency || 'USD', locale)}</TableCell>
+                <TableCell className="font-medium tabular-nums">
+                  {formatMoney(line, book?.currency || 'USD', locale)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
