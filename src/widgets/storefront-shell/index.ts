@@ -1,1 +1,1 @@
-export * from './ui/storefront-shell';
+export { StorefrontShell } from './ui/storefront-shell';

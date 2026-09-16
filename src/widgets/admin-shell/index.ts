@@ -1,1 +1,1 @@
-export * from './ui/admin-shell';
+export { AdminShell } from './ui/admin-shell';

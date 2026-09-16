@@ -1,1 +1,1 @@
-export * from './ui/panel-shell';
+export { PanelShell } from './ui/panel-shell';

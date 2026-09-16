@@ -1,6 +1,20 @@
-export * from './model/types';
-export * from './model/categories';
-export * from './api/book-api';
+export type { Book, CreateBookInput, UpdateBookInput, BookListParams } from './model/types';
+export {
+  BOOK_CATEGORIES,
+  BOOK_PRICE_MIN,
+  BOOK_PRICE_MAX,
+  type BookCategory,
+} from './model/categories';
+export {
+  bookKeys,
+  fetchBooks,
+  fetchFeaturedBooks,
+  fetchBook,
+  createBook,
+  updateBook,
+  deleteBook,
+  uploadBookCover,
+} from './api/book-api';
 export { useBooksQuery } from './api/use-books-query';
 export { useBookQuery } from './api/use-book-query';
 export { useFeaturedBooksQuery } from './api/use-featured-books-query';
