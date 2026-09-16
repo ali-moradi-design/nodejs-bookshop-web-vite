@@ -51,7 +51,11 @@ export function LoginForm() {
             <Label>{t('auth.password')}</Label>
             <Input type="password" autoComplete="current-password" {...form.register('password')} />
           </div>
-          <Button className="w-full" type="submit" disabled={form.formState.isSubmitting}>
+          <Button
+            className="w-full text-white"
+            type="submit"
+            disabled={form.formState.isSubmitting}
+          >
             {t('nav.login')}
           </Button>
         </form>

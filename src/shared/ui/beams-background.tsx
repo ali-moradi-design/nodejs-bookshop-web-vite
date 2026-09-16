@@ -15,6 +15,8 @@ interface AnimatedGradientBackgroundProps {
   className?: string;
   children?: ReactNode;
   intensity?: 'subtle' | 'medium' | 'strong';
+  /** Cool cyan/blue (default) or warm terracotta / sand / gold wash for hero. */
+  tone?: 'cool' | 'warm';
 }
 
 interface Beam {
@@ -30,10 +32,32 @@ interface Beam {
   pulseSpeed: number;
 }
 
-function createBeam(width: number, height: number, isDarkMode: boolean): Beam {
+function hueConfig(isDarkMode: boolean, tone: 'cool' | 'warm') {
+  if (tone === 'warm') {
+    // terracotta ~18, sandy-brown ~28, light-gold ~42
+    return {
+      hueBase: isDarkMode ? 18 : 22,
+      hueRange: isDarkMode ? 28 : 24,
+      saturation: isDarkMode ? '78%' : '72%',
+      lightness: isDarkMode ? '58%' : '48%',
+    };
+  }
+  return {
+    hueBase: isDarkMode ? 190 : 210,
+    hueRange: isDarkMode ? 70 : 50,
+    saturation: isDarkMode ? '85%' : '75%',
+    lightness: isDarkMode ? '65%' : '45%',
+  };
+}
+
+function createBeam(
+  width: number,
+  height: number,
+  isDarkMode: boolean,
+  tone: 'cool' | 'warm',
+): Beam {
   const angle = -35 + Math.random() * 10;
-  const hueBase = isDarkMode ? 190 : 210;
-  const hueRange = isDarkMode ? 70 : 50;
+  const { hueBase, hueRange } = hueConfig(isDarkMode, tone);
 
   return {
     x: Math.random() * width * 1.5 - width * 0.25,
@@ -53,6 +77,7 @@ export function BeamsBackground({
   className,
   children,
   intensity = 'strong',
+  tone = 'cool',
 }: AnimatedGradientBackgroundProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,6 +85,7 @@ export function BeamsBackground({
   const animationFrameRef = useRef<number>(0);
   const MINIMUM_BEAMS = 20;
   const isDarkModeRef = useRef(false);
+  const toneRef = useRef(tone);
   const sizeRef = useRef({ width: 0, height: 0 });
 
   const opacityMap = {
@@ -67,6 +93,10 @@ export function BeamsBackground({
     medium: 0.85,
     strong: 1,
   };
+
+  useEffect(() => {
+    toneRef.current = tone;
+  }, [tone]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -100,7 +130,7 @@ export function BeamsBackground({
 
       const totalBeams = Math.floor(MINIMUM_BEAMS * 1.5);
       beamsRef.current = Array.from({ length: totalBeams }, () =>
-        createBeam(width, height, isDarkModeRef.current),
+        createBeam(width, height, isDarkModeRef.current, toneRef.current),
       );
     };
 
@@ -122,9 +152,7 @@ export function BeamsBackground({
 
       const column = index % 3;
       const spacing = width / 3;
-
-      const hueBase = isDarkModeRef.current ? 190 : 210;
-      const hueRange = isDarkModeRef.current ? 70 : 50;
+      const { hueBase, hueRange } = hueConfig(isDarkModeRef.current, toneRef.current);
 
       beam.y = height + 100;
       beam.x = column * spacing + spacing / 2 + (Math.random() - 0.5) * spacing * 0.5;
@@ -145,9 +173,7 @@ export function BeamsBackground({
         beam.opacity * (0.8 + Math.sin(beam.pulse) * 0.2) * opacityMap[intensity];
 
       const gradient = context.createLinearGradient(0, 0, 0, beam.length);
-
-      const saturation = isDarkModeRef.current ? '85%' : '75%';
-      const lightness = isDarkModeRef.current ? '65%' : '45%';
+      const { saturation, lightness } = hueConfig(isDarkModeRef.current, toneRef.current);
 
       gradient.addColorStop(0, `hsla(${beam.hue}, ${saturation}, ${lightness}, 0)`);
       gradient.addColorStop(
@@ -208,15 +234,17 @@ export function BeamsBackground({
       }
       observer.disconnect();
     };
-  }, [intensity]);
+  }, [intensity, tone]);
+
+  const warmSurface =
+    tone === 'warm'
+      ? 'bg-vanilla-custard-50/80 dark:bg-sandy-brown-950/90'
+      : 'bg-neutral-100 dark:bg-neutral-950';
 
   return (
     <div
       ref={containerRef}
-      className={cn(
-        'relative w-full overflow-hidden bg-neutral-100 dark:bg-neutral-950',
-        className,
-      )}
+      className={cn('relative w-full overflow-hidden', warmSurface, className)}
     >
       <canvas
         className="pointer-events-none absolute inset-0"
@@ -227,7 +255,12 @@ export function BeamsBackground({
       <motion.div
         aria-hidden
         animate={{ opacity: [0.05, 0.15, 0.05] }}
-        className="pointer-events-none absolute inset-0 bg-neutral-900/5 dark:bg-neutral-950/5"
+        className={cn(
+          'pointer-events-none absolute inset-0',
+          tone === 'warm'
+            ? 'bg-fiery-terracotta-900/5 dark:bg-light-gold-950/10'
+            : 'bg-neutral-900/5 dark:bg-neutral-950/5',
+        )}
         style={{ backdropFilter: 'blur(50px)' }}
         transition={{
           duration: 10,
