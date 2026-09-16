@@ -146,7 +146,8 @@
     "submitIssue": "Submit issue",
     "subject": "Subject",
     "body": "Details",
-    "type": "Type"
+    "type": "Type",
+    "paymentSuccess": "Payment successful"
   },
   "admin": {
     "title": "Admin",

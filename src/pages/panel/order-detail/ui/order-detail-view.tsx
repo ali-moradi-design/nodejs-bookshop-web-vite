@@ -1,19 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useOrderQuery, usePayOrderMutation } from '@/entities/order';
+import { useOrderQuery } from '@/entities/order';
+import { PayOrderButton } from '@/features/pay-order';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  PageLoader,
-} from '@/shared/ui';
+import { Alert, Badge, Card, CardContent, CardHeader, CardTitle, PageLoader } from '@/shared/ui';
 
 export function PanelOrderDetailPage() {
   const params = useParams();
@@ -22,7 +14,6 @@ export function PanelOrderDetailPage() {
   const locale = usePreferences((s) => s.locale);
 
   const { data, isLoading, error } = useOrderQuery(id);
-  const pay = usePayOrderMutation(id);
 
   if (isLoading) return <PageLoader />;
   if (error || !data) {
@@ -42,11 +33,7 @@ export function PanelOrderDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge>{data.status}</Badge>
-          {data.status === 'pending_payment' ? (
-            <Button onClick={() => pay.mutate()} disabled={pay.isPending}>
-              {t('panel.pay')}
-            </Button>
-          ) : null}
+          <PayOrderButton orderId={id} visible={data.status === 'pending_payment'} />
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">

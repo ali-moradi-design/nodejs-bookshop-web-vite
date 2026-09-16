@@ -146,7 +146,8 @@
     "submitIssue": "ارسال گزارش",
     "subject": "موضوع",
     "body": "توضیحات",
-    "type": "نوع"
+    "type": "نوع",
+    "paymentSuccess": "پرداخت موفق"
   },
   "admin": {
     "title": "مدیریت",

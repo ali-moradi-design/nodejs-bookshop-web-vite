@@ -8,3 +8,5 @@ export {
 } from './model/parse-book-filters';
 export { BookFilters } from './ui/book-filters';
 export { PriceRangeFilter } from './ui/price-range-filter';
+export { ActiveFilterChips } from './ui/active-filter-chips';
+export { useCatalogBooks } from './model/use-catalog-books';
