@@ -25,7 +25,13 @@ export function CartLineControls({ bookId, quantity }: Props) {
           if (q >= 1 && q !== quantity) updateMut.mutate(q);
         }}
       />
-      <Button variant="ghost" size="sm" onClick={() => removeMut.mutate()}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+        onClick={() => removeMut.mutate()}
+        disabled={removeMut.isPending}
+      >
         {t('cart.remove')}
       </Button>
     </div>

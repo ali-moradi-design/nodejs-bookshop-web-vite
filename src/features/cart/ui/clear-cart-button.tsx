@@ -7,7 +7,12 @@ export function ClearCartButton() {
   const clearMut = useClearCartMutation();
 
   return (
-    <Button variant="outline" onClick={() => clearMut.mutate()} disabled={clearMut.isPending}>
+    <Button
+      variant="outline"
+      className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+      onClick={() => clearMut.mutate()}
+      disabled={clearMut.isPending}
+    >
       {t('cart.clear')}
     </Button>
   );
