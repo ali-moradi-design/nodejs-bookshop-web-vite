@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { bookKeys, fetchBooks, type Book } from '@/entities/book';
+import type { Book } from '@/entities/book';
 import { useDebouncedValue, usePreferences } from '@/shared/hooks';
+import { useBookSearchQuery } from '../model/use-book-search-query';
 import { formatMoney, resolveImageUrl, cn } from '@/shared/lib';
 import {
   Button,
@@ -52,11 +52,7 @@ export function HeaderBookSearch() {
 
   const enabled = open && debouncedQ.length > 0;
 
-  const { data, isFetching, isError } = useQuery({
-    queryKey: bookKeys.list({ q: debouncedQ, limit: 8, page: 1 }),
-    queryFn: () => fetchBooks({ q: debouncedQ, limit: 8, page: 1 }),
-    enabled,
-  });
+  const { data, isFetching, isError } = useBookSearchQuery(debouncedQ, { enabled });
 
   const results: Book[] = data?.data ?? [];
 

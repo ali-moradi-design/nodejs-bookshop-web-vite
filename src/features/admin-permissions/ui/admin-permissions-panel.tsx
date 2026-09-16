@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { fetchPermissions, permissionKeys, type Permission } from '@/entities/permission';
+import { usePermissionsQuery, type Permission } from '@/entities/permission';
 import { DataTable, Alert, Badge, PageLoader } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 import { usePageTitle } from '@/shared/hooks';
@@ -10,10 +9,7 @@ import { usePageTitle } from '@/shared/hooks';
 export function AdminPermissionsPanel() {
   const { t } = useTranslation();
   usePageTitle(t('nav.permissions'));
-  const { data, isLoading, error } = useQuery({
-    queryKey: permissionKeys.list(),
-    queryFn: async () => (await fetchPermissions()).data,
-  });
+  const { data, isLoading, error } = usePermissionsQuery();
 
   const columns = useMemo<ColumnDef<Permission>[]>(
     () => [

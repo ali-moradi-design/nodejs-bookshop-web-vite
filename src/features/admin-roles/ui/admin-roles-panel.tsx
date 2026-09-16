@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { fetchRoles, roleKeys, type Role } from '@/entities/role';
+import { useRolesQuery, type Role } from '@/entities/role';
 import { DataTable, Alert, Badge, PageLoader } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 import { usePageTitle } from '@/shared/hooks';
@@ -10,10 +9,7 @@ import { usePageTitle } from '@/shared/hooks';
 export function AdminRolesPanel() {
   const { t } = useTranslation();
   usePageTitle(t('nav.roles'));
-  const { data, isLoading, error } = useQuery({
-    queryKey: roleKeys.list(),
-    queryFn: async () => (await fetchRoles()).data,
-  });
+  const { data, isLoading, error } = useRolesQuery();
 
   const columns = useMemo<ColumnDef<Role>[]>(
     () => [

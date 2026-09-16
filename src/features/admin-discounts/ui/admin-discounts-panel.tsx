@@ -1,22 +1,12 @@
 import { useMemo, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zNum, zNumOptional } from '@/shared/lib';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import {
-  createDiscount,
-  deleteDiscount,
-  DISCOUNT_TYPES,
-  discountKeys,
-  fetchDiscounts,
-  updateDiscount,
-  type Discount,
-} from '@/entities/discount';
+import { DISCOUNT_TYPES, useDiscountsQuery, type Discount } from '@/entities/discount';
 import { DataTable } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 import {
@@ -37,6 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui';
+import { useSaveDiscountMutation } from '../model/use-save-discount-mutation';
+import { useDeleteDiscountMutation } from '../model/use-delete-discount-mutation';
 
 const schema = z.object({
   code: z.string().min(1),
@@ -54,14 +46,10 @@ type FormValues = z.infer<typeof schema>;
 
 export function AdminDiscountsPanel() {
   const { t } = useTranslation();
-  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Discount | null>(null);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: discountKeys.list(),
-    queryFn: async () => (await fetchDiscounts()).data,
-  });
+  const { data, isLoading, error } = useDiscountsQuery();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema) as Resolver<FormValues>,
@@ -87,25 +75,11 @@ export function AdminDiscountsPanel() {
     setOpen(true);
   };
 
-  const save = useMutation({
-    mutationFn: (values: FormValues) =>
-      editing ? updateDiscount(editing.id, values) : createDiscount(values),
-    onSuccess: () => {
-      toast.success('Saved');
-      setOpen(false);
-      void qc.invalidateQueries({ queryKey: discountKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
+  const save = useSaveDiscountMutation({
+    editingId: editing?.id ?? null,
+    onSuccess: () => setOpen(false),
   });
-
-  const remove = useMutation({
-    mutationFn: (id: string) => deleteDiscount(id),
-    onSuccess: () => {
-      toast.success('Deleted');
-      void qc.invalidateQueries({ queryKey: discountKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const remove = useDeleteDiscountMutation();
 
   const columns = useMemo<ColumnDef<Discount>[]>(
     () => [

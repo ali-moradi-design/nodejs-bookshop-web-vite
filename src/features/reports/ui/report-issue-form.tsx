@@ -1,12 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { createIssue, ISSUE_TYPES } from '@/entities/report';
-import { ApiError } from '@/shared/api';
+import { ISSUE_TYPES } from '@/entities/report';
 import {
   Button,
   Card,
@@ -22,6 +19,7 @@ import {
   SelectValue,
   Textarea,
 } from '@/shared/ui';
+import { useCreateIssueMutation } from '../model/use-create-issue-mutation';
 
 const schema = z.object({
   type: z.enum(ISSUE_TYPES),
@@ -39,19 +37,8 @@ export function ReportIssueForm() {
     defaultValues: { type: 'other', targetId: '', subject: '', body: '' },
   });
 
-  const submit = useMutation({
-    mutationFn: (values: FormValues) =>
-      createIssue({
-        type: values.type,
-        targetId: values.targetId || undefined,
-        subject: values.subject,
-        body: values.body,
-      }),
-    onSuccess: () => {
-      toast.success('Issue submitted');
-      form.reset({ type: 'other', targetId: '', subject: '', body: '' });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
+  const submit = useCreateIssueMutation({
+    onSuccess: () => form.reset({ type: 'other', targetId: '', subject: '', body: '' }),
   });
 
   return (
@@ -60,7 +47,17 @@ export function ReportIssueForm() {
         <CardTitle>{t('panel.submitIssue')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="space-y-4" onSubmit={form.handleSubmit((v) => submit.mutate(v))}>
+        <form
+          className="space-y-4"
+          onSubmit={form.handleSubmit((v) =>
+            submit.mutate({
+              type: v.type,
+              targetId: v.targetId || undefined,
+              subject: v.subject,
+              body: v.body,
+            }),
+          )}
+        >
           <div className="space-y-1">
             <Label>{t('panel.type')}</Label>
             <Select

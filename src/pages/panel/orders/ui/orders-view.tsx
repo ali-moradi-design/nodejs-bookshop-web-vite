@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { fetchOrders, orderKeys, type Order } from '@/entities/order';
+import { useOrdersQuery, type Order } from '@/entities/order';
 import { DataTable } from '@/shared/ui';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
@@ -13,10 +12,7 @@ import { ApiError } from '@/shared/api';
 export function PanelOrdersPage() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const { data, isLoading, error } = useQuery({
-    queryKey: orderKeys.list(),
-    queryFn: async () => (await fetchOrders()).data,
-  });
+  const { data, isLoading, error } = useOrdersQuery();
 
   const columns = useMemo<ColumnDef<Order>[]>(
     () => [

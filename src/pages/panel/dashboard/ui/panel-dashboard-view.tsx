@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth';
-import { fetchOrders, orderKeys } from '@/entities/order';
-import { favoriteKeys, fetchFavorites } from '@/entities/favorite';
-import { fetchReviews, reviewKeys } from '@/entities/review';
+import { useOrdersQuery } from '@/entities/order';
+import { useFavoritesQuery } from '@/entities/favorite';
+import { useReviewsQuery } from '@/entities/review';
 import { KpiCards } from '@/widgets/kpi-cards';
 import { Button, Card, CardContent, CardHeader, CardTitle, PageLoader } from '@/shared/ui';
 
@@ -12,24 +11,9 @@ export function PanelDashboardPage() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
-  const ordersQ = useQuery({
-    queryKey: orderKeys.list(),
-    queryFn: async () => (await fetchOrders()).data,
-  });
-  const favQ = useQuery({
-    queryKey: favoriteKeys.list(),
-    queryFn: async () => (await fetchFavorites()).data,
-  });
-  const reviewsQ = useQuery({
-    queryKey: reviewKeys.list({ user: user?.id }),
-    queryFn: async () => {
-      const res = await fetchReviews({ user: user?.id, limit: 100 });
-      return Array.isArray((res as { data: unknown }).data)
-        ? (res as { data: unknown[] }).data
-        : [];
-    },
-    enabled: Boolean(user?.id),
-  });
+  const ordersQ = useOrdersQuery();
+  const favQ = useFavoritesQuery();
+  const reviewsQ = useReviewsQuery({ user: user?.id, limit: 100 }, { enabled: Boolean(user?.id) });
 
   if (ordersQ.isLoading || favQ.isLoading) return <PageLoader />;
 

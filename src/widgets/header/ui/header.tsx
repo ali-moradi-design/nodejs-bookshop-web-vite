@@ -16,17 +16,17 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[120rem] items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-16 max-w-[120rem] items-center justify-between gap-4 px-4 md:h-[4.5rem]">
         <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2 font-semibold">
+          <Link to="/" className="flex items-center gap-3 font-semibold">
             <img
               src="/logo.png"
               alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8 rounded-md object-contain"
+              width={56}
+              height={56}
+              className="h-12 w-12 object-contain sm:h-14 sm:w-14"
             />
-            <span>{t('common.appName')}</span>
+            <span className="text-base sm:text-lg">{t('common.appName')}</span>
           </Link>
           <nav className="hidden items-center gap-4 text-sm md:flex">
             <Link to="/catalog" className="text-muted-foreground hover:text-foreground">

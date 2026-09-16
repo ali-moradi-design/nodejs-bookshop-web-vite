@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,15 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import {
-  bookKeys,
-  createBook,
-  deleteBook,
-  fetchBooks,
-  updateBook,
-  uploadBookCover,
-  type Book,
-} from '@/entities/book';
+import { uploadBookCover, useBooksQuery, type Book } from '@/entities/book';
 import { DataTable } from '@/shared/ui';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
@@ -35,6 +26,8 @@ import {
   PageLoader,
   Textarea,
 } from '@/shared/ui';
+import { useSaveBookMutation } from '../model/use-save-book-mutation';
+import { useDeleteBookMutation } from '../model/use-delete-book-mutation';
 
 const schema = z.object({
   title: z.string().min(1),
@@ -53,14 +46,15 @@ type FormValues = z.infer<typeof schema>;
 export function AdminBooksPanel() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Book | null>(null);
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: bookKeys.list({ page, limit: 20 }),
-    queryFn: () => fetchBooks({ page, limit: 20, sort: 'createdAt', order: 'desc' }),
+  const { data, isLoading, error } = useBooksQuery({
+    page,
+    limit: 20,
+    sort: 'createdAt',
+    order: 'desc',
   });
 
   const form = useForm<FormValues>({
@@ -110,43 +104,11 @@ export function AdminBooksPanel() {
     setOpen(true);
   };
 
-  const save = useMutation({
-    mutationFn: async (values: FormValues) => {
-      const payload = {
-        title: values.title,
-        author: values.author,
-        description: values.description,
-        isbn: values.isbn || undefined,
-        price: values.price,
-        stock: values.stock,
-        categories: values.categories
-          ? values.categories
-              .split(',')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : undefined,
-        featured: Boolean(values.featured),
-        coverImageUrl: values.coverImageUrl || undefined,
-      };
-      if (editing) return updateBook(editing.id, payload);
-      return createBook(payload);
-    },
-    onSuccess: () => {
-      toast.success(editing ? 'Book updated' : 'Book created');
-      setOpen(false);
-      void qc.invalidateQueries({ queryKey: bookKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
+  const save = useSaveBookMutation({
+    editingId: editing?.id ?? null,
+    onSuccess: () => setOpen(false),
   });
-
-  const remove = useMutation({
-    mutationFn: (id: string) => deleteBook(id),
-    onSuccess: () => {
-      toast.success('Book deleted');
-      void qc.invalidateQueries({ queryKey: bookKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const remove = useDeleteBookMutation();
 
   const onUpload = async (file?: File | null) => {
     if (!file) return;

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { bookKeys, fetchBooks, type Book } from '@/entities/book';
+import { useBooksQuery, type Book } from '@/entities/book';
 import { BookFilters, useBookFilters } from '@/features/book-filters';
 import { BookGrid, BookGridSkeleton } from '@/widgets/book-grid';
 import { Alert, Button, EmptyState } from '@/shared/ui';
@@ -29,10 +28,7 @@ export function CatalogPage() {
     [filters.params],
   );
 
-  const { data, isLoading, isFetching, error, refetch } = useQuery({
-    queryKey: bookKeys.list(filters.params),
-    queryFn: () => fetchBooks(filters.params),
-  });
+  const { data, isLoading, isFetching, error, refetch } = useBooksQuery(filters.params);
 
   useEffect(() => {
     setAccumulated([]);

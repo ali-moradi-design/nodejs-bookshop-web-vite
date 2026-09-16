@@ -1,6 +1,10 @@
 export * from './model/types';
 export * from './model/categories';
 export * from './api/book-api';
+export { useBooksQuery } from './api/use-books-query';
+export { useBookQuery } from './api/use-book-query';
+export { useFeaturedBooksQuery } from './api/use-featured-books-query';
+export { useCartBooksQueries } from './api/use-cart-books-queries';
 export { BookCard } from './ui/book-card';
 export { BookCardSkeleton } from './ui/book-card-skeleton';
 export { BookDetailSkeleton } from './ui/book-detail-skeleton';

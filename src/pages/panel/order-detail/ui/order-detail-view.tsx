@@ -1,8 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { fetchOrder, orderKeys, payOrder } from '@/entities/order';
+import { useOrderQuery, usePayOrderMutation } from '@/entities/order';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { ApiError } from '@/shared/api';
@@ -22,23 +20,9 @@ export function PanelOrderDetailPage() {
   const id = String(params?.id ?? '');
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const qc = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: orderKeys.detail(id),
-    queryFn: async () => (await fetchOrder(id)).data,
-    enabled: Boolean(id),
-  });
-
-  const pay = useMutation({
-    mutationFn: () => payOrder(id),
-    onSuccess: () => {
-      toast.success('Payment successful');
-      void qc.invalidateQueries({ queryKey: orderKeys.detail(id) });
-      void qc.invalidateQueries({ queryKey: orderKeys.list() });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const { data, isLoading, error } = useOrderQuery(id);
+  const pay = usePayOrderMutation(id);
 
   if (isLoading) return <PageLoader />;
   if (error || !data) {

@@ -1,13 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { updateUser, getRoleNames, type User } from '@/entities/user';
-import { ApiError } from '@/shared/api';
+import { getRoleNames, type User } from '@/entities/user';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/shared/ui';
+import { useUpdateProfileMutation } from '../model/use-update-profile-mutation';
 
 const schema = z.object({
   name: z.string().min(2).max(100),
@@ -33,19 +31,7 @@ export function ProfileForm({ user, onUpdated }: Props) {
     },
   });
 
-  const save = useMutation({
-    mutationFn: (values: FormValues) =>
-      updateUser(user.id, {
-        name: values.name,
-        email: values.email,
-        ...(values.password ? { password: values.password } : {}),
-      }),
-    onSuccess: async (res) => {
-      await onUpdated(res.data);
-      toast.success('Profile updated');
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const save = useUpdateProfileMutation(user.id, { onUpdated });
 
   return (
     <Card className="max-w-lg">

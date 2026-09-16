@@ -1,14 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { checkoutCart } from '@/entities/cart';
-import { ApiError } from '@/shared/api';
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label } from '@/shared/ui';
+import { useCheckoutMutation, type CheckoutFormValues } from '../model/use-checkout-mutation';
 
 const schema = z.object({
   fullName: z.string().min(2),
@@ -27,7 +23,6 @@ type Props = { defaultFullName?: string };
 
 export function CheckoutForm({ defaultFullName = '' }: Props) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const form = useForm<FormValues>({
     resolver: zodResolver(schema) as Resolver<FormValues>,
     defaultValues: {
@@ -42,26 +37,7 @@ export function CheckoutForm({ defaultFullName = '' }: Props) {
     },
   });
 
-  const checkout = useMutation({
-    mutationFn: (values: FormValues) =>
-      checkoutCart({
-        shippingAddress: {
-          fullName: values.fullName,
-          line1: values.line1,
-          line2: values.line2 || undefined,
-          city: values.city,
-          state: values.state || undefined,
-          postalCode: values.postalCode,
-          country: values.country,
-        },
-        discountCode: values.discountCode || undefined,
-      }),
-    onSuccess: (res) => {
-      toast.success(t('toast.orderPlaced'));
-      navigate(`/panel/orders/${res.data.id}`);
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const checkout = useCheckoutMutation();
 
   return (
     <Card>
@@ -71,7 +47,7 @@ export function CheckoutForm({ defaultFullName = '' }: Props) {
       <CardContent>
         <form
           className="grid gap-4 sm:grid-cols-2"
-          onSubmit={form.handleSubmit((v) => checkout.mutate(v))}
+          onSubmit={form.handleSubmit((v) => checkout.mutate(v as CheckoutFormValues))}
         >
           {(
             [

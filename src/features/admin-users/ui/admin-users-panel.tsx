@@ -1,45 +1,18 @@
 import { useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import {
-  deleteUser,
-  fetchUsers,
-  getRoleNames,
-  updateUser,
-  userKeys,
-  type User,
-} from '@/entities/user';
+import { getRoleNames, useUsersQuery, type User } from '@/entities/user';
 import { DataTable } from '@/shared/ui';
 import { ApiError } from '@/shared/api';
 import { Alert, Badge, Button, PageLoader } from '@/shared/ui';
+import { useToggleUserActiveMutation } from '../model/use-toggle-user-active-mutation';
+import { useDeleteUserMutation } from '../model/use-delete-user-mutation';
 
 export function AdminUsersPanel() {
   const { t } = useTranslation();
-  const qc = useQueryClient();
-  const { data, isLoading, error } = useQuery({
-    queryKey: userKeys.list(),
-    queryFn: async () => (await fetchUsers()).data,
-  });
-
-  const toggleActive = useMutation({
-    mutationFn: (user: User) => updateUser(user.id, { isActive: !user.isActive }),
-    onSuccess: () => {
-      toast.success('User updated');
-      void qc.invalidateQueries({ queryKey: userKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
-
-  const remove = useMutation({
-    mutationFn: (id: string) => deleteUser(id),
-    onSuccess: () => {
-      toast.success('User deleted');
-      void qc.invalidateQueries({ queryKey: userKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const { data, isLoading, error } = useUsersQuery();
+  const toggleActive = useToggleUserActiveMutation();
+  const remove = useDeleteUserMutation();
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [

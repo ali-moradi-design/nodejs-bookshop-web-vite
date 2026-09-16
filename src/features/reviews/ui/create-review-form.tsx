@@ -1,14 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { createReview, reviewKeys } from '@/entities/review';
 import { zInt } from '@/shared/lib';
-import { ApiError } from '@/shared/api';
 import { Button, Input, Label, Textarea } from '@/shared/ui';
+import { useCreateReviewMutation } from '../model/use-create-review-mutation';
 
 const reviewSchema = z.object({
   rating: zInt.pipe(z.number().int().min(1).max(5)),
@@ -21,20 +18,13 @@ type Props = { bookId: string };
 
 export function CreateReviewForm({ bookId }: Props) {
   const { t } = useTranslation();
-  const qc = useQueryClient();
   const form = useForm<ReviewForm>({
     resolver: zodResolver(reviewSchema) as Resolver<ReviewForm>,
     defaultValues: { rating: 5, comment: '' },
   });
 
-  const submitReview = useMutation({
-    mutationFn: (values: ReviewForm) => createReview({ book: bookId, ...values }),
-    onSuccess: () => {
-      toast.success('Review submitted');
-      form.reset({ rating: 5, comment: '' });
-      void qc.invalidateQueries({ queryKey: reviewKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
+  const submitReview = useCreateReviewMutation(bookId, {
+    onSuccess: () => form.reset({ rating: 5, comment: '' }),
   });
 
   return (

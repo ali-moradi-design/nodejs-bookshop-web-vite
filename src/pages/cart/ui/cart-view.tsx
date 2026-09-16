@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useQuery, useQueries } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { cartKeys, fetchCart } from '@/entities/cart';
-import { bookKeys, fetchBook } from '@/entities/book';
+import { useCartQuery } from '@/entities/cart';
+import { useCartBooksQueries } from '@/entities/book';
 import { useAuthStore } from '@/features/auth';
 import { CartLineControls, ClearCartButton } from '@/features/cart';
 import { formatMoney } from '@/shared/lib';
@@ -27,20 +26,13 @@ export function CartPage() {
   const locale = usePreferences((s) => s.locale);
   const user = useAuthStore((s) => s.user);
 
-  const cartQuery = useQuery({
-    queryKey: cartKeys.current(),
-    queryFn: async () => (await fetchCart()).data,
-    enabled: Boolean(user),
-  });
+  const cartQuery = useCartQuery({ enabled: Boolean(user) });
 
   const items = cartQuery.data?.items ?? [];
-  const bookQueries = useQueries({
-    queries: items.map((item) => ({
-      queryKey: bookKeys.detail(item.bookId),
-      queryFn: async () => (await fetchBook(item.bookId)).data,
-      enabled: Boolean(user),
-    })),
-  });
+  const bookQueries = useCartBooksQueries(
+    items.map((item) => item.bookId),
+    { enabled: Boolean(user) },
+  );
 
   if (!user) {
     return (

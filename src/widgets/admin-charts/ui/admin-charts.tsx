@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { fetchOrdersByStatus, fetchRevenue, fetchTopBooks, reportKeys } from '@/entities/report';
+import { useOrdersByStatusQuery, useRevenueQuery, useTopBooksQuery } from '@/entities/report';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
@@ -9,18 +8,9 @@ export function AdminCharts() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
 
-  const revenueQ = useQuery({
-    queryKey: reportKeys.revenue(),
-    queryFn: async () => (await fetchRevenue()).data,
-  });
-  const statusQ = useQuery({
-    queryKey: reportKeys.ordersByStatus(),
-    queryFn: async () => (await fetchOrdersByStatus()).data,
-  });
-  const topQ = useQuery({
-    queryKey: reportKeys.topBooks(),
-    queryFn: async () => (await fetchTopBooks()).data,
-  });
+  const revenueQ = useRevenueQuery();
+  const statusQ = useOrdersByStatusQuery();
+  const topQ = useTopBooksQuery();
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">

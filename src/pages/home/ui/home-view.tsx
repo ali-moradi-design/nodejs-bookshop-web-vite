@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { bookKeys, fetchFeaturedBooks } from '@/entities/book';
+import { useFeaturedBooksQuery } from '@/entities/book';
 import { BookGrid, BookGridSkeleton } from '@/widgets/book-grid';
 import { HomeHero } from '@/widgets/home-hero';
 import { RecentlyViewedSection } from '@/widgets/recently-viewed';
@@ -11,10 +10,7 @@ import { usePageTitle } from '@/shared/hooks';
 export function HomePage() {
   const { t } = useTranslation();
   usePageTitle(t('nav.home'));
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: bookKeys.featured(),
-    queryFn: async () => (await fetchFeaturedBooks()).data,
-  });
+  const { data, isLoading, error, refetch } = useFeaturedBooksQuery();
 
   return (
     <div className="space-y-10">

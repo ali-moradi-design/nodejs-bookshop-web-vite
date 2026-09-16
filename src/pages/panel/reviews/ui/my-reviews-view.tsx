@@ -1,7 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth';
-import { fetchReviews, reviewKeys } from '@/entities/review';
+import { useReviewsQuery } from '@/entities/review';
 import { formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import { Alert, EmptyState, PageLoader } from '@/shared/ui';
@@ -11,16 +10,10 @@ export function MyReviewsPage() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
   const user = useAuthStore((s) => s.user);
-  const { data, isLoading, error } = useQuery({
-    queryKey: reviewKeys.list({ user: user?.id }),
-    queryFn: async () => {
-      const res = await fetchReviews({ user: user?.id, limit: 100 });
-      return Array.isArray((res as { data: unknown }).data)
-        ? (res as { data: import('@/entities/review').Review[] }).data
-        : [];
-    },
-    enabled: Boolean(user?.id),
-  });
+  const { data, isLoading, error } = useReviewsQuery(
+    { user: user?.id, limit: 100 },
+    { enabled: Boolean(user?.id) },
+  );
 
   if (isLoading) return <PageLoader />;
   if (error) {

@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { favoriteKeys, fetchFavorites } from '@/entities/favorite';
+import { useFavoritesQuery } from '@/entities/favorite';
 import { RemoveFavoriteButton } from '@/features/favorites';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences, usePageTitle } from '@/shared/hooks';
@@ -12,10 +11,7 @@ export function FavoritesPage() {
   const { t } = useTranslation();
   usePageTitle(t('nav.favorites'));
   const locale = usePreferences((s) => s.locale);
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: favoriteKeys.list(),
-    queryFn: async () => (await fetchFavorites()).data,
-  });
+  const { data, isLoading, error, refetch } = useFavoritesQuery();
 
   if (isLoading) return <PageLoader />;
   if (error) {

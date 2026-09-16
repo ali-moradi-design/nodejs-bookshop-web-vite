@@ -1,12 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import {
-  adminKeys,
-  fetchDashboardSummary,
-  fetchLowStock,
-  fetchRecentOrders,
-} from '@/entities/admin';
+import { useDashboardSummaryQuery, useLowStockQuery, useRecentOrdersQuery } from '@/entities/admin';
 import { KpiCards } from '@/widgets/kpi-cards';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
@@ -21,18 +15,9 @@ export function AdminDashboardPage() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
 
-  const summaryQ = useQuery({
-    queryKey: adminKeys.summary(),
-    queryFn: async () => (await fetchDashboardSummary()).data,
-  });
-  const recentQ = useQuery({
-    queryKey: adminKeys.recentOrders(8),
-    queryFn: async () => (await fetchRecentOrders(8)).data,
-  });
-  const lowQ = useQuery({
-    queryKey: adminKeys.lowStock(5),
-    queryFn: async () => (await fetchLowStock(5)).data,
-  });
+  const summaryQ = useDashboardSummaryQuery();
+  const recentQ = useRecentOrdersQuery(8);
+  const lowQ = useLowStockQuery(5);
 
   if (summaryQ.isLoading) return <PageLoader />;
   if (summaryQ.error) {

@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, useQueries } from '@tanstack/react-query';
 import { ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cartKeys, fetchCart } from '@/entities/cart';
-import { bookKeys, fetchBook } from '@/entities/book';
+import { useCartQuery } from '@/entities/cart';
+import { useCartBooksQueries } from '@/entities/book';
 import { formatMoney } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
 import {
@@ -41,20 +40,13 @@ export function CartBadgeLink({ enabled = true }: Props) {
   const locale = usePreferences((s) => s.locale);
   const canFetch = enabled;
 
-  const cartQuery = useQuery({
-    queryKey: cartKeys.current(),
-    queryFn: async () => (await fetchCart()).data,
-    enabled: canFetch,
-  });
+  const cartQuery = useCartQuery({ enabled: canFetch });
 
   const items = cartQuery.data?.items ?? [];
-  const bookQueries = useQueries({
-    queries: items.map((item) => ({
-      queryKey: bookKeys.detail(item.bookId),
-      queryFn: async () => (await fetchBook(item.bookId)).data,
-      enabled: canFetch && open,
-    })),
-  });
+  const bookQueries = useCartBooksQueries(
+    items.map((item) => item.bookId),
+    { enabled: canFetch && open },
+  );
 
   const count = canFetch ? items.reduce((sum, item) => sum + item.quantity, 0) : 0;
   const label = count > 0 ? t('nav.cartWithCount', { count }) : t('nav.cart');

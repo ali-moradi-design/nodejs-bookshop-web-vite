@@ -1,13 +1,9 @@
 import { useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import {
-  fetchIssues,
   ISSUE_STATUSES,
-  reportKeys,
-  updateIssue,
+  useIssuesQuery,
   type IssueReport,
   type IssueStatus,
 } from '@/entities/report';
@@ -24,26 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui';
+import { useUpdateIssueStatusMutation } from '../model/use-update-issue-status-mutation';
 
 export function AdminReportsPanel() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const qc = useQueryClient();
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: reportKeys.issues(),
-    queryFn: async () => (await fetchIssues()).data,
-  });
-
-  const update = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: IssueStatus }) =>
-      updateIssue(id, { status }),
-    onSuccess: () => {
-      toast.success('Issue updated');
-      void qc.invalidateQueries({ queryKey: reportKeys.issues() });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const { data, isLoading, error } = useIssuesQuery();
+  const update = useUpdateIssueStatusMutation();
 
   const columns = useMemo<ColumnDef<IssueReport>[]>(
     () => [

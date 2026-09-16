@@ -1,9 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { cartKeys, removeCartItem, updateCartItem } from '@/entities/cart';
-import { ApiError } from '@/shared/api';
 import { Button, Input } from '@/shared/ui';
+import { useUpdateCartItemMutation } from '../model/use-update-cart-item-mutation';
+import { useRemoveCartItemMutation } from '../model/use-remove-cart-item-mutation';
 
 type Props = {
   bookId: string;
@@ -12,19 +10,8 @@ type Props = {
 
 export function CartLineControls({ bookId, quantity }: Props) {
   const { t } = useTranslation();
-  const qc = useQueryClient();
-
-  const updateMut = useMutation({
-    mutationFn: (next: number) => updateCartItem(bookId, next),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: cartKeys.all }),
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
-
-  const removeMut = useMutation({
-    mutationFn: () => removeCartItem(bookId),
-    onSuccess: () => void qc.invalidateQueries({ queryKey: cartKeys.all }),
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const updateMut = useUpdateCartItemMutation(bookId);
+  const removeMut = useRemoveCartItemMutation(bookId);
 
   return (
     <div className="flex items-center gap-2">

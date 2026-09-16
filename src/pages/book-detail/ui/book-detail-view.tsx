@@ -1,8 +1,7 @@
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { bookKeys, fetchBook, BookCoverImage, BookDetailSkeleton } from '@/entities/book';
-import { fetchReviews, reviewKeys, type Review } from '@/entities/review';
+import { useBookQuery, BookCoverImage, BookDetailSkeleton } from '@/entities/book';
+import { useReviewsQuery } from '@/entities/review';
 import { useAuthStore } from '@/features/auth';
 import { AddToCartButton } from '@/features/cart';
 import { FavoriteToggleButton } from '@/features/favorites';
@@ -20,23 +19,11 @@ export function BookDetailPage() {
   const locale = usePreferences((s) => s.locale);
   const user = useAuthStore((s) => s.user);
 
-  const bookQuery = useQuery({
-    queryKey: bookKeys.detail(id),
-    queryFn: async () => (await fetchBook(id)).data,
-    enabled: Boolean(id),
-  });
-
+  const bookQuery = useBookQuery(id);
   useTrackRecentlyViewed(bookQuery.data);
   usePageTitle(bookQuery.data?.title ?? t('nav.catalog'));
 
-  const reviewsQuery = useQuery({
-    queryKey: reviewKeys.list({ book: id }),
-    queryFn: async () => {
-      const res = await fetchReviews({ book: id, limit: 50 });
-      return Array.isArray((res as { data: unknown }).data) ? (res as { data: Review[] }).data : [];
-    },
-    enabled: Boolean(id),
-  });
+  const reviewsQuery = useReviewsQuery({ book: id, limit: 50 }, { enabled: Boolean(id) });
 
   if (bookQuery.isLoading) return <BookDetailSkeleton />;
   if (bookQuery.error || !bookQuery.data) {

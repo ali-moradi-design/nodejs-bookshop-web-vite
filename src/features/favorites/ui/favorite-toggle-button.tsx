@@ -1,18 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import {
-  addFavorite,
-  favoriteKeys,
-  fetchFavorites,
-  removeFavorite,
-  type Favorite,
-} from '@/entities/favorite';
-import { ApiError } from '@/shared/api';
+import { useFavoritesQuery } from '@/entities/favorite';
 import { Button } from '@/shared/ui';
 import { cn } from '@/shared/lib';
+import { useToggleFavoriteMutation } from '../model/use-toggle-favorite-mutation';
 
 type Props = {
   bookId: string;
@@ -30,48 +22,10 @@ export function FavoriteToggleButton({
   className,
 }: Props) {
   const { t } = useTranslation();
-  const qc = useQueryClient();
 
-  const favQuery = useQuery({
-    queryKey: favoriteKeys.list(),
-    queryFn: async () => (await fetchFavorites()).data,
-    enabled: isAuthenticated,
-  });
-
+  const favQuery = useFavoritesQuery({ enabled: isAuthenticated });
   const isFav = favQuery.data?.some((f) => f.bookId === bookId) ?? false;
-
-  const toggleFav = useMutation({
-    mutationFn: async () => {
-      if (isFav) await removeFavorite(bookId);
-      else await addFavorite(bookId);
-    },
-    onMutate: async () => {
-      await qc.cancelQueries({ queryKey: favoriteKeys.all });
-      const previous = qc.getQueryData<Favorite[]>(favoriteKeys.list());
-      qc.setQueryData<Favorite[]>(favoriteKeys.list(), (old = []) => {
-        if (isFav) return old.filter((f) => f.bookId !== bookId);
-        const optimistic: Favorite = {
-          id: `optimistic-${bookId}`,
-          userId: '',
-          bookId,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        return [...old, optimistic];
-      });
-      return { previous };
-    },
-    onSuccess: () => {
-      toast.success(isFav ? t('toast.removedFavorite') : t('toast.addedFavorite'));
-    },
-    onError: (e, _v, ctx) => {
-      if (ctx?.previous !== undefined) qc.setQueryData(favoriteKeys.list(), ctx.previous);
-      toast.error(e instanceof ApiError ? e.message : t('common.error'));
-    },
-    onSettled: () => {
-      void qc.invalidateQueries({ queryKey: favoriteKeys.all });
-    },
-  });
+  const toggleFav = useToggleFavoriteMutation(bookId, isFav);
 
   if (!isAuthenticated) {
     if (!compact) return null;

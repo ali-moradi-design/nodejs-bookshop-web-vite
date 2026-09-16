@@ -1,16 +1,7 @@
 import { useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type ColumnDef } from '@tanstack/react-table';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import {
-  fetchOrders,
-  orderKeys,
-  ORDER_STATUSES,
-  updateOrderStatus,
-  type Order,
-  type OrderStatus,
-} from '@/entities/order';
+import { useOrdersQuery, ORDER_STATUSES, type Order, type OrderStatus } from '@/entities/order';
 import { DataTable } from '@/shared/ui';
 import { formatMoney, formatDate } from '@/shared/lib';
 import { usePreferences } from '@/shared/hooks';
@@ -25,26 +16,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/ui';
+import { useUpdateOrderStatusMutation } from '../model/use-update-order-status-mutation';
 
 export function AdminOrdersPanel() {
   const { t } = useTranslation();
   const locale = usePreferences((s) => s.locale);
-  const qc = useQueryClient();
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: orderKeys.list(),
-    queryFn: async () => (await fetchOrders()).data,
-  });
-
-  const update = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
-      updateOrderStatus(id, status),
-    onSuccess: () => {
-      toast.success('Status updated');
-      void qc.invalidateQueries({ queryKey: orderKeys.all });
-    },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : t('common.error')),
-  });
+  const { data, isLoading, error } = useOrdersQuery();
+  const update = useUpdateOrderStatusMutation();
 
   const columns = useMemo<ColumnDef<Order>[]>(
     () => [
