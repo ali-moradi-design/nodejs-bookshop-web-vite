@@ -372,3 +372,15 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* Hide native number-input spinners (Firefox + Chromium/WebKit) */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
