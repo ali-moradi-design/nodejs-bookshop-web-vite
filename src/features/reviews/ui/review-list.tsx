@@ -18,7 +18,7 @@ export function ReviewList({ reviews }: Props) {
       {reviews.map((r) => (
         <li key={r.id} className="rounded-lg border p-3">
           <div className="flex items-center justify-between gap-3 text-sm">
-            <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 leading-none">
               <span className="font-medium">{r.populated?.user?.name || 'User'}</span>
               <LoveRating value={r.rating} readOnly size="sm" aria-label={t('book.rating')} />
             </div>

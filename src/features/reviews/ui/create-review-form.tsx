@@ -54,14 +54,17 @@ export function CreateReviewForm({ bookId, existingReview }: Props) {
       })}
     >
       <div className="space-y-2">
-        <Label>{t('book.yourRating')}</Label>
-        <LoveRating
-          value={rating}
-          onChange={(next) =>
-            form.setValue('rating', next, { shouldValidate: true, shouldDirty: true })
-          }
-          size="md"
-        />
+        <div className="flex flex-wrap items-center gap-3">
+          <Label className="m-0 shrink-0 leading-none">{t('book.yourRating')}</Label>
+          <LoveRating
+            value={rating}
+            onChange={(next) =>
+              form.setValue('rating', next, { shouldValidate: true, shouldDirty: true })
+            }
+            size="md"
+            className="translate-y-px"
+          />
+        </div>
         {form.formState.errors.rating ? (
           <p className="text-sm text-destructive">{form.formState.errors.rating.message}</p>
         ) : null}

@@ -41,7 +41,7 @@ export function LoveRating({
       role={interactive ? 'radiogroup' : 'img'}
       aria-label={ariaLabel ?? t('book.yourRating')}
       aria-readonly={readOnly || undefined}
-      className={cn('inline-flex items-center gap-0.5', className)}
+      className={cn('inline-flex items-center gap-0.5 leading-none', className)}
       onMouseLeave={() => setHovered(null)}
     >
       {([1, 2, 3, 4, 5] as const).map((n) => {
@@ -66,7 +66,7 @@ export function LoveRating({
             aria-checked={value === n}
             aria-label={t('book.rateOutOf5', { n })}
             className={cn(
-              'rounded-sm p-0.5 outline-none transition-transform hover:scale-110',
+              'inline-flex items-center justify-center rounded-sm p-0.5 outline-none transition-transform hover:scale-110',
               'focus-visible:ring-2 focus-visible:ring-fiery-terracotta-500/60 focus-visible:ring-offset-2',
             )}
             onMouseEnter={() => setHovered(n)}
