@@ -67,14 +67,14 @@ export function BookDetailPanel({ bookId }: Props) {
             {t('book.author')}: {book.author}
           </p>
           {averageRating != null ? (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex h-8 flex-wrap items-center gap-2">
               <LoveRating
                 value={averageRating}
                 readOnly
                 size="md"
                 aria-label={t('book.averageRating')}
               />
-              <span className="text-sm text-muted-foreground">
+              <span className="flex h-8 items-center text-sm leading-none text-muted-foreground">
                 {t('book.averageRatingValue', {
                   rating: averageRating,
                   count: reviews.length,

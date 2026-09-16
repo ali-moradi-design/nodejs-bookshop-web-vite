@@ -53,16 +53,17 @@ export function CreateReviewForm({ bookId, existingReview }: Props) {
         }
       })}
     >
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <Label className="m-0 shrink-0 leading-none">{t('book.yourRating')}</Label>
+      <div className="space-y-1.5">
+        <div className="flex h-8 flex-wrap items-center gap-x-3 gap-y-1">
+          <Label className="m-0 flex h-8 shrink-0 items-center text-sm font-medium leading-none">
+            {t('book.yourRating')}
+          </Label>
           <LoveRating
             value={rating}
             onChange={(next) =>
               form.setValue('rating', next, { shouldValidate: true, shouldDirty: true })
             }
             size="md"
-            className="translate-y-px"
           />
         </div>
         {form.formState.errors.rating ? (
